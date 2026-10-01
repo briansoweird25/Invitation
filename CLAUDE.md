@@ -19,6 +19,11 @@ The product allows users to:
 
 The product should feel like a real premium design tool, not a generic CRUD application or an AI-generated website.
 
+Related documents:
+
+- `DESIGN.md` for the visual design system (application UI in Part A, invitation design in Part B).
+- `docs/TEMPLATE_SYSTEM.md` for the template architecture: taxonomy, catalog, presets, decoration kit, renderer layers and how to add templates.
+
 ---
 
 # 1. Product Philosophy
@@ -31,10 +36,12 @@ The experience should feel:
 - Modern
 - Simple
 - Premium
-- Calm
+- Warm
 - Visual
 - Easy to use
 - Professional
+
+The application UI is clean and easy to use. The invitations are expressive, decorative and varied. The invitations carry the color and personality of the product.
 
 Prioritize:
 
@@ -160,11 +167,14 @@ src/
 │   ├── ui/
 │   ├── layout/
 │   ├── landing/
-│   ├── templates/
+│   ├── templates/          gallery UI (cards, filters, preview dialog)
 │   ├── editor/
 │   │   ├── panels/
 │   │   └── controls/
-│   ├── invitation/
+│   ├── invitation/         renderer, catalog, kit, layouts, templates
+│   │   ├── kit/            shared decoration pieces (target)
+│   │   ├── layouts/        reusable layout primitives (target)
+│   │   └── templates/      one folder per template
 │   ├── dashboard/
 │   └── rsvp/
 ├── pages/
@@ -172,8 +182,13 @@ src/
 ├── hooks/
 ├── lib/
 ├── types/
-├── data/
+├── data/                   taxonomy, categories, palettes, font pairings
 └── main.tsx
+
+docs/
+└── TEMPLATE_SYSTEM.md
+
+Items marked "target" are described in `docs/TEMPLATE_SYSTEM.md` and are not built yet.
 
 Keep related functionality together.
 
@@ -264,46 +279,92 @@ interface RSVPSettings {
 
 Keep the model extensible.
 
+The model above is the base. It grows through **optional** keys only, so saved invitations keep working:
+
+- `InvitationCategory` comes from the taxonomy in `data/taxonomy.ts` (13 categories, see section 9) and is stored as plain text.
+- `InvitationDesign` may gain optional keys such as `secondaryColor`, `scriptFont`, `frame`, `pattern`, `background`, `paletteId`, `fontPairingId` and `presetId`. See `docs/TEMPLATE_SYSTEM.md` section 3.6.
+- Renderers use the resolved values (concrete colors and fonts). Palette, pairing and preset ids are editor hints only.
+- Unknown keys and unknown ids are ignored, never an error.
+- Never make an existing optional key required, and never rename a stored key.
+
 ---
 
 # 8. Template Architecture
 
 Templates must be independent from invitation data.
 
-Use a template registry.
+Use a template registry. A template is a component plus catalog metadata.
+
+Current shape (implemented):
 
 ```ts
 export const templateRegistry = {
   "elegant-wedding": {
     name: "Elegant Wedding",
     category: "wedding",
+    description: "...",
+    isPremium: false,
     component: ElegantWedding,
-    isPremium: false,
+    decorationOptions: [{ id: "border", label: "Thin border" }],
+    defaultDesign: { /* fonts, colors, decorations */ },
+    sampleContent: { /* sample invitation content */ },
   },
-  "floral-wedding": {
-    name: "Floral Wedding",
-    category: "wedding",
-    component: FloralWedding,
-    isPremium: true,
-  },
-  "minimal-wedding": {
-    name: "Minimal Wedding",
-    category: "wedding",
-    component: MinimalWedding,
-    isPremium: false,
-  },
+  // floral-wedding, minimal-wedding, modern-birthday
 };
 ```
 
-Templates receive invitation data as props.
+Target shape (see `docs/TEMPLATE_SYSTEM.md`):
 
-Adding a template should not require changing the database or editor architecture.
+- **Catalog metadata** (id, name, category, style tags, layout, tier, status, capabilities, presets) is small and always loaded.
+- **Components** load lazily, one chunk per template or category.
+- **Presets** are curated variations of one template: palette, font pairing, decorations, frame, pattern, background.
+- **Capabilities** declare what the editor may offer for a template. Panels with nothing to offer are hidden.
+- **The kit** is a shared library of SVG decoration pieces (frames, botanicals, patterns, ornaments, shapes, illustrations, backgrounds) that recolor from the palette.
+
+Rules:
+
+- Templates receive invitation data as props (`content` and `design`).
+- Adding a template must not require changing the database, the editor or the renderer.
+- A new layout is a new template. A new look on the same layout is a new preset.
+- Template ids are permanent. Retire a template with `status: "retired"` instead of removing it, so existing invitations still render.
+- Templates must have a distinct visual identity. They should not be recolors of each other.
+- Templates are built from layouts and kit pieces where they exist.
 
 ---
 
-# 9. Initial Templates
+# 9. Categories, Styles and Templates
 
-Start with a small number of high-quality templates.
+## Categories
+
+The product supports these categories. They are defined once in `data/taxonomy.ts`.
+
+- Wedding (`wedding`)
+- Birthday (`birthday`)
+- Baby Shower (`baby-shower`)
+- Bridal Shower (`bridal-shower`)
+- Engagement (`engagement`)
+- Anniversary (`anniversary`)
+- Graduation (`graduation`)
+- Baptism (`baptism`)
+- Communion (`communion`)
+- Retirement (`retirement`)
+- Dinner Party (`dinner-party`)
+- Corporate Event (`corporate-event`)
+- General Party (`general-party`)
+
+Category ids are permanent once used. `general-party` is the fallback for unknown values.
+
+Each category supplies its own field labels, helper text, sample content and message suggestions through `data/categories.ts`, so the editor does not hardcode checks like `category === "birthday"`.
+
+## Style tags
+
+Elegant, Romantic, Floral, Modern, Minimal, Luxury, Vintage, Rustic, Botanical, Playful, Colorful, Traditional, Editorial.
+
+A template has one to four style tags. Tags describe the look and power gallery filters.
+
+## Current templates
+
+Only a few templates exist today. They are the **reference templates** that prove the architecture:
 
 Wedding:
 - Elegant Wedding
@@ -313,7 +374,17 @@ Wedding:
 Birthday:
 - Modern Birthday
 
-Quality is more important than quantity.
+## Growing the catalog
+
+Do not build many templates before the architecture is ready. Order of work:
+
+1. Template System v2: taxonomy, category config, catalog/loader split, presets, migrating the four reference templates.
+2. Kit v1: a small set of shared frames, botanicals, patterns, ornaments, shapes and backgrounds.
+3. Palette and font-pairing libraries, plus capability-driven editor pickers.
+4. Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews.
+5. Template batches, one category at a time (about three to four per category), each tested in the gallery, editor and dashboard before the next.
+
+Quality is more important than quantity. Variety is important too: layouts, decoration, backgrounds and mood should differ across the catalog.
 
 ---
 
@@ -324,14 +395,28 @@ Use a central InvitationRenderer.
 Conceptually:
 
 InvitationRenderer
-→ Template Registry
+→ Template Catalog
 → Selected Template
 → Rendered Invitation
+
+The renderer draws in layers (see `docs/TEMPLATE_SYSTEM.md` section 3.7):
+
+0. Background (color, gradient, texture or image)
+1. Pattern
+2. Frame
+3. Decorations behind the text
+4. Content
+5. Foreground ornaments
+
+The renderer owns the canvas, the background and the pattern. The template owns the frame, decorations, content and ornaments, built from kit pieces.
+
+It fills the width it is given and scales through `cqw` units.
 
 The renderer should be reusable by:
 
 - Editor preview
 - Public invitation page
+- Dashboard and gallery thumbnails
 - Future export functionality
 
 Avoid separate preview and public rendering implementations.
@@ -361,6 +446,16 @@ Editor panels:
 Use collapsible sections where appropriate.
 
 Do not overwhelm users.
+
+Target behavior as the template system grows:
+
+- Panels are **capability-driven**. They offer what the selected template supports and hide the rest.
+- Labels, helper text and starter copy come from the category configuration.
+- Typography shows curated font pairings as cards with a live sample.
+- Colors show curated palettes first, with custom colors as an advanced option.
+- Background, Decorations, frames and patterns use thumbnails of the actual result.
+- A "Looks" strip applies a template's presets.
+- Applying a preset or palette writes ordinary values into `design`. The invitation data stays the single source of truth.
 
 ---
 
@@ -479,6 +574,14 @@ rsvps:
 - created_at
 
 Use JSON/JSONB for flexible invitation content and design configuration where appropriate.
+
+The schema already supports the full category, style and template roadmap:
+
+- `invitations.category` and `invitations.template_id` are plain text with no enum or foreign key, so new categories and templates need no migration.
+- New design options are stored inside the `design` JSONB column.
+- The in-app template catalog is the source of truth. The `templates` table is a read-only mirror, and its `configuration` JSONB may hold style tags and preset names if they are ever needed server-side.
+
+Client code that validates stored rows must validate `category` against the taxonomy (with a safe fallback), not a hardcoded list.
 
 ---
 
@@ -601,6 +704,7 @@ Validate:
 - RSVP information
 - Uploaded files
 - Slugs
+- Categories and template ids (against the taxonomy and catalog, with safe fallbacks)
 
 Use appropriate validation on client and server/database boundaries.
 
@@ -625,7 +729,21 @@ The invitation must remain readable on small screens.
 
 The website should NOT look like a generic AI-generated SaaS website.
 
-Avoid:
+Two layers, two attitudes (details in `DESIGN.md`):
+
+**Application UI: clean, warm, premium.**
+
+- Calm, organized, easy to use.
+- Warm neutrals, characterful serif headings, subtle atmosphere tints, generous imagery.
+- Not plain and not busy.
+
+**Invitations: expressive, decorative, varied.**
+
+- Rich decoration, confident typography, strong mood.
+- A wide range: luxury, playful, vintage, editorial, botanical, rustic, minimal and more.
+- Real renderer output is the main imagery across the product.
+
+Avoid (application UI):
 - Excessive purple/blue gradients
 - Giant gradient blobs
 - Excessive glassmorphism
@@ -642,13 +760,13 @@ Prefer:
 - Generous whitespace
 - Subtle borders
 - Restrained shadows
-- High-quality imagery
+- High-quality imagery (the invitations themselves)
 - Elegant spacing
 - Serif/sans-serif combinations
 - Subtle motion
 - Clear hierarchy
 
-The product should feel like a premium design tool.
+The product should feel like a premium design tool and a stationery studio.
 
 ---
 
@@ -660,7 +778,7 @@ All interactive elements must be keyboard accessible.
 
 Inputs must have labels.
 
-Maintain reasonable color contrast.
+Maintain reasonable color contrast, including inside invitations. Curated palettes must meet the contrast thresholds in `DESIGN.md` B11. Decorative SVG is hidden from assistive technology.
 
 Do not rely on color alone to communicate state.
 
@@ -677,6 +795,8 @@ Avoid unnecessary re-renders.
 Optimize large images and expensive template previews.
 
 Lazy-load large pages/assets when appropriate.
+
+At catalog scale, keep template metadata small and eager, and lazy-load template components, kit pieces and fonts. Render gallery previews only when they are near the viewport. Decoration is inline SVG or CSS, never raster images.
 
 Do not optimize prematurely.
 
@@ -896,6 +1016,20 @@ Phase 13: Monetization
 
 ---
 
+## Template expansion track
+
+Template work runs alongside the numbered phases. See `docs/TEMPLATE_SYSTEM.md` section 11.
+
+T1: Template System v2 (taxonomy, category config, catalog/loader split, presets). No visual change.
+T2: Kit v1 (frames, botanicals, patterns, ornaments, shapes, backgrounds).
+T3: Palette and font-pairing libraries, capability-driven editor pickers.
+T4: Gallery upgrade (13 categories, style filters, variations, lazy previews).
+T5+: Template batches, one category at a time.
+
+Recommended: finish T1 and T2 before Phase 9 (public invitations) and Phase 11 (export), so those render the richer templates from the start.
+
+---
+
 # 35. Development Workflow
 
 For every task:
@@ -947,7 +1081,12 @@ Do not:
 - Disable RLS just to make development easier.
 - Put secrets in client-side code.
 - Add unnecessary dependencies.
-- Build dozens of templates before testing the architecture.
+- Build dozens of templates before the template system (taxonomy, presets, kit) is ready.
+- Ship a template that is only a recolor of another. Recolors are presets.
+- Hardcode category checks (like `category === "birthday"`) in the editor. Use the category configuration.
+- Rename or reuse a template id, a category id or a stored design key.
+- Add raster images to the bundle for decoration. Use SVG and CSS.
+- Use decoration assets without a license that allows commercial use.
 - Build AI before the core invitation experience.
 - Build payments before the core product.
 - Use excessive animations.
@@ -1062,3 +1201,5 @@ Keep the code clean.
 Keep the design intentional.
 
 Keep the invitation creation experience at the center of every decision.
+
+When working on templates, read `docs/TEMPLATE_SYSTEM.md` and `DESIGN.md` Part B first. When working on application screens, read `DESIGN.md` Part A.

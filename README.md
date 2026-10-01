@@ -6,6 +6,8 @@ A web application for creating, customizing, publishing, and sharing beautiful d
 
 Make it possible for someone without design experience to create a polished invitation in minutes.
 
+The application is clean, warm and easy to use. The invitations are expressive, decorative and varied: luxury, playful, vintage, editorial, floral, botanical, rustic, minimal and more, across weddings, birthdays, baby showers, graduations and other occasions.
+
 Core flow:
 
 ```text
@@ -90,6 +92,18 @@ RSVP
 - Public invitation URLs
 - RSVP
 
+## Template library (growing)
+
+Four reference templates exist today (Elegant, Floral and Minimal Wedding, and Modern Birthday). The architecture is being extended to support:
+
+- 13 categories: Wedding, Birthday, Baby Shower, Bridal Shower, Engagement, Anniversary, Graduation, Baptism, Communion, Retirement, Dinner Party, Corporate Event, General Party
+- 13 style tags: Elegant, Romantic, Floral, Modern, Minimal, Luxury, Vintage, Rustic, Botanical, Playful, Colorful, Traditional, Editorial
+- Variations (presets) of each template
+- A shared decoration kit: frames, botanicals, patterns, ornaments, shapes and illustrations
+- Curated color palettes and typography pairings
+
+See `docs/TEMPLATE_SYSTEM.md` and `DESIGN.md` (Part B).
+
 ## Future
 
 - AI invitation writing
@@ -156,11 +170,16 @@ src/
 ├── types/
 ├── data/
 └── main.tsx
+
+docs/          architecture documents (TEMPLATE_SYSTEM.md)
+supabase/      database migrations
 ```
 
 See `CLAUDE.md` for detailed development architecture and rules.
 
-See `DESIGN.md` for visual design rules.
+See `DESIGN.md` for visual design rules (application UI in Part A, invitation design in Part B).
+
+See `docs/TEMPLATE_SYSTEM.md` for the template architecture and how to add templates.
 
 ---
 
