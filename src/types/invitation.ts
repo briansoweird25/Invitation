@@ -76,3 +76,18 @@ export interface TemplateProps {
   content: InvitationContent;
   design: InvitationDesign;
 }
+
+export type Attendance = "attending" | "declined";
+
+/** One guest reply. Only the invitation's owner can read these. */
+export interface RsvpReply {
+  id: string;
+  invitationId: string;
+  guestName: string;
+  guestEmail: string;
+  attendance: Attendance;
+  /** Everyone the reply covers, including the guest. Always 1 for a decline. */
+  guestCount: number;
+  message: string;
+  createdAt: string;
+}

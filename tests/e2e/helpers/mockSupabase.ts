@@ -46,7 +46,9 @@ export function seedRow(id: string, title: string, hostNames: string, extra: Row
 export interface MockSupabase {
   db: Map<string, Row>;
   log: { removed: string[]; uploads: string[] };
-  failNext: { patch: boolean; list: boolean };
+  /** Guest replies, in insertion order. */
+  rsvps: Row[];
+  failNext: { patch: boolean; list: boolean; rsvpSubmit: boolean };
 }
 
 const get = (r: Row, col: string) => (col.includes("->>") ? r[col.split("->>")[0]]?.[col.split("->>")[1]] : r[col]);
@@ -60,7 +62,7 @@ const matches = (r: Row, params: URLSearchParams) =>
 
 /** Routes every request to the fake Supabase host into the in-memory database. */
 export async function installMockSupabase(context: BrowserContext): Promise<MockSupabase> {
-  const mock: MockSupabase = { db: new Map(), log: { removed: [], uploads: [] }, failNext: { patch: false, list: false } };
+  const mock: MockSupabase = { db: new Map(), log: { removed: [], uploads: [] }, rsvps: [], failNext: { patch: false, list: false, rsvpSubmit: false } };
   const CORS = { "access-control-allow-origin": "*", "access-control-allow-headers": "*", "access-control-allow-methods": "*", "access-control-expose-headers": "*" };
 
   await context.route(`${SUPABASE_URL}/**`, async (route) => {
@@ -80,6 +82,26 @@ export async function installMockSupabase(context: BrowserContext): Promise<Mock
     if (url.pathname.startsWith("/storage/v1/object/invitation-assets/") && method === "POST") {
       mock.log.uploads.push(url.pathname);
       return json(200, { Key: url.pathname });
+    }
+
+    if (url.pathname.startsWith("/rest/v1/rsvps")) {
+      // Mirrors the row level security policies: replies are write-only for guests and readable by the owner.
+      const authed = /\.sig$/.test(req.headers()["authorization"] ?? "");
+      if (method === "POST") {
+        if (mock.failNext.rsvpSubmit) return json(500, { message: "boom" });
+        const body = JSON.parse(req.postData() ?? "{}");
+        const inv = mock.db.get(body.invitation_id);
+        const settings = inv?.rsvp_settings ?? {};
+        const today = new Date().toISOString().slice(0, 10);
+        const open = inv?.status === "published" && settings.enabled === true && (!settings.deadline || settings.deadline >= today) && body.guest_count <= (settings.maxGuests ?? 50);
+        if (!open) return json(403, { code: "42501", message: "new row violates row-level security policy" });
+        mock.rsvps.push({ id: crypto.randomUUID(), created_at: new Date(Date.now() + mock.rsvps.length).toISOString(), ...body });
+        return route.fulfill({ status: 201, headers: CORS });
+      }
+      if (method === "GET") {
+        const visible = authed ? mock.rsvps.filter((r) => mock.db.get(r.invitation_id)?.user_id === USER_ID && matches(r, url.searchParams)) : [];
+        return json(200, visible.sort((a, b) => b.created_at.localeCompare(a.created_at)));
+      }
     }
 
     if (url.pathname.startsWith("/rest/v1/invitations")) {

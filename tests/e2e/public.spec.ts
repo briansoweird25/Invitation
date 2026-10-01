@@ -45,10 +45,10 @@ test("a failed load shows a friendly message and can be retried", async ({ page,
 
 test("the RSVP details show only when RSVP is enabled", async ({ page, context }) => {
   const mock = await installMockSupabase(context);
-  mock.db.set(ID, published({ rsvp_settings: { enabled: true, deadline: "2026-05-01", contactName: "Ava", contactEmail: "ava@example.com" } }));
+  mock.db.set(ID, published({ rsvp_settings: { enabled: true, deadline: "2099-05-01", contactName: "Ava", contactEmail: "ava@example.com" } }));
   await page.goto("/invitation/ava-and-noah");
   await expect(page.getByRole("heading", { name: "RSVP" })).toBeVisible();
-  await expect(page.getByText("Please reply by May 1, 2026.")).toBeVisible();
+  await expect(page.getByText("Please reply by May 1, 2099.")).toBeVisible();
   await expect(page.getByRole("link", { name: /ava@example.com/ })).toHaveAttribute("href", "mailto:ava@example.com");
 
   mock.db.get(ID)!.rsvp_settings = { enabled: false, contactEmail: "ava@example.com" };

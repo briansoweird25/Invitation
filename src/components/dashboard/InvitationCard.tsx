@@ -1,4 +1,4 @@
-import { Eye, EyeOff, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Eye, EyeOff, MoreHorizontal, Pencil, Trash2, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,13 @@ export function InvitationCard({ invitation, busy, onTogglePublish, onDelete }: 
             <Pencil /> Edit
           </Link>
         </Button>
+        {invitation.rsvp.enabled && (
+          <Button asChild variant="ghost" size="sm">
+            <Link to={`/dashboard/invitations/${id}/rsvps`}>
+              <Users /> RSVPs
+            </Link>
+          </Button>
+        )}
         {published && slug && (
           <Button asChild variant="ghost" size="sm">
             <Link to={`/invitation/${slug}`}>View</Link>

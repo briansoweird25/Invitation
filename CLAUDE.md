@@ -1024,13 +1024,13 @@ Phase 8: Dashboard
 - Delete
 - Publish/unpublish
 
-Phase 9: Public Invitations (done, except the RSVP reply form, which is Phase 10)
+Phase 9: Public Invitations (done)
 - Public URL
 - Invitation rendering
 - Sharing
 - RSVP details (deadline and contact)
 
-Phase 10: RSVP
+Phase 10: RSVP (done)
 - Form
 - Validation
 - Database

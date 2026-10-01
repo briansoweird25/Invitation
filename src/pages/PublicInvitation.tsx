@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
 import { ShareBar } from "@/components/invitation/ShareBar";
-import { RsvpInfo } from "@/components/rsvp/RsvpInfo";
+import { RsvpSection } from "@/components/rsvp/RsvpSection";
 import { useInvitationFonts } from "@/hooks/useInvitationFonts";
 import { usePublishedInvitation } from "@/hooks/usePublishedInvitation";
 import { isHexColor } from "@/lib/color";
@@ -55,7 +55,7 @@ function Loaded({ invitation }: { invitation: PublicInvitationData }) {
           <InvitationRenderer templateId={invitation.templateId} content={content} design={design} />
         </div>
         <ShareBar url={url} title={invitation.title || content.hostNames} />
-        <RsvpInfo rsvp={invitation.rsvp} />
+        <RsvpSection invitationId={invitation.id} rsvp={invitation.rsvp} />
       </main>
       <footer className="mt-10 text-center text-xs text-muted-foreground">
         Made with <Link to="/templates" className="underline underline-offset-4 hover:text-foreground">{SITE_TITLE}</Link>

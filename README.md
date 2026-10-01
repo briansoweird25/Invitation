@@ -285,7 +285,12 @@ Public invitations. **Done.** `/invitation/:slug` loads a published invitation b
 
 ## Phase 10
 
-RSVP.
+RSVP. **Done.**
+
+- **Guest form** (public invitation page, no account): name, will you come, number of guests (only when attending and the host allows more than one), optional email and note. Validated with Zod (`lib/rsvp.ts`): name 1 to 120 characters, optional valid email, whole guest count up to the host's limit (10 when unset, never above 50), note up to 1000 characters. A decline always stores one guest. A hidden trap field quietly drops bot submissions. After the reply-by date the form is replaced by a "replies closed" note.
+- **Storage:** `submitRsvp` inserts into `rsvps` (`lib/rsvpApi.ts`). Guests can only insert; they cannot read replies. The existing row level security lets anyone reply only to a published invitation with RSVPs on. Migration `20260101000300_rsvp_limits.sql` additionally makes the database enforce the deadline (one day of grace for time zones) and the maximum guests per reply, so a hand-made request cannot get around the form. It replaces the insert policy and **has not been run against a live database from the development sandbox**: apply it to a staging project and send a test reply before relying on it.
+- **Owner dashboard:** invitations with RSVPs on get an "RSVPs" button. `/dashboard/invitations/:invitationId/rsvps` shows Attending, Not attending, Total guests (seats from attending replies only) and Replies, then the guest list with names, answer, guest count, email, note and time, filterable by answer. Only the owner can read replies (row level security).
+- Not included: deleting or exporting replies, email notifications, one reply per guest (replies are anonymous, so duplicates are possible), analytics.
 
 ## Phase 11
 
