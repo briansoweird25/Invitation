@@ -13,6 +13,9 @@ import { vintageBirthday } from "./templates/birthday/vintage-birthday/meta";
 import { chalkboardGraduation } from "./templates/graduation/chalkboard-graduation/meta";
 import { goldenGraduation } from "./templates/graduation/golden-graduation/meta";
 import { varsityGraduation } from "./templates/graduation/varsity-graduation/meta";
+import { decoParty } from "./templates/general-party/deco-party/meta";
+import { gardenParty } from "./templates/general-party/garden-party/meta";
+import { ticketParty } from "./templates/general-party/ticket-party/meta";
 import { elegantWedding } from "./templates/wedding/elegant-wedding/meta";
 import { floralWedding } from "./templates/wedding/floral-wedding/meta";
 import { luxuryWedding } from "./templates/wedding/luxury-wedding/meta";
@@ -37,6 +40,9 @@ const metas: TemplateMeta[] = [
   varsityGraduation,
   goldenGraduation,
   chalkboardGraduation,
+  ticketParty,
+  gardenParty,
+  decoParty,
 ];
 
 export type TemplateId = string;

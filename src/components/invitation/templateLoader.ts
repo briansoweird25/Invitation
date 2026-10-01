@@ -21,6 +21,9 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "varsity-graduation": () => import("./templates/graduation/varsity-graduation").then((m) => ({ default: m.VarsityGraduation })),
   "golden-graduation": () => import("./templates/graduation/golden-graduation").then((m) => ({ default: m.GoldenGraduation })),
   "chalkboard-graduation": () => import("./templates/graduation/chalkboard-graduation").then((m) => ({ default: m.ChalkboardGraduation })),
+  "ticket-party": () => import("./templates/general-party/ticket-party").then((m) => ({ default: m.TicketParty })),
+  "garden-party": () => import("./templates/general-party/garden-party").then((m) => ({ default: m.GardenParty })),
+  "deco-party": () => import("./templates/general-party/deco-party").then((m) => ({ default: m.DecoParty })),
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 
