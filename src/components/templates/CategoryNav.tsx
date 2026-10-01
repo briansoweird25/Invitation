@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-import { categories, templates } from "@/data/templates";
+import { templateList } from "@/components/invitation/templateRegistry";
+import { categories } from "@/data/templates";
 import { cn } from "@/lib/utils";
 
 const tabClass = ({ isActive }: { isActive: boolean }) =>
@@ -10,11 +11,11 @@ const tabClass = ({ isActive }: { isActive: boolean }) =>
 
 export function CategoryNav({ search }: { search: string }) {
   const items = [
-    { to: "/templates", label: "All", count: templates.length },
+    { to: "/templates", label: "All", count: templateList.length },
     ...categories.map((c) => ({
       to: `/templates/${c.id}`,
       label: c.label,
-      count: templates.filter((t) => t.category === c.id).length,
+      count: templateList.filter((t) => t.category === c.id).length,
     })),
   ];
 

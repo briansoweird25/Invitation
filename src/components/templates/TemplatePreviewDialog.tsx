@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { templateEditorPath, type TemplateInfo } from "@/data/templates";
+import type { TemplateListItem } from "@/components/invitation/templateRegistry";
+import { templateEditorPath } from "@/data/templates";
 import { AccessBadge } from "./AccessBadge";
-import { SampleInvitation } from "./SampleInvitations";
+import { TemplatePreview } from "./TemplatePreview";
 
 interface TemplatePreviewDialogProps {
-  template: TemplateInfo | undefined;
+  template: TemplateListItem | undefined;
   onClose: () => void;
 }
 
@@ -18,7 +19,7 @@ export function TemplatePreviewDialog({ template, onClose }: TemplatePreviewDial
           <div className="grid md:grid-cols-[1.1fr_1fr]">
             <div className="bg-muted p-8 sm:p-10">
               <div className="mx-auto max-w-xs shadow-soft md:max-w-none">
-                <SampleInvitation id={template.id} />
+                <TemplatePreview id={template.id} />
               </div>
             </div>
             <div className="flex flex-col justify-center p-8 sm:p-10">

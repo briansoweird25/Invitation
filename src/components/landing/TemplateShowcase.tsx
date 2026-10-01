@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Container } from "@/components/layout/Container";
-import { templates } from "@/data/templates";
-import { SampleInvitation } from "@/components/templates/SampleInvitations";
+import { templateList } from "@/components/invitation/templateRegistry";
+import { TemplatePreview } from "@/components/templates/TemplatePreview";
 import { SectionHeading } from "./SectionHeading";
 
 export function TemplateShowcase() {
@@ -24,12 +24,12 @@ export function TemplateShowcase() {
         </div>
 
         <ul className="mt-12 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-8">
-          {templates.map((t) => (
+          {templateList.map((t) => (
             <li key={t.id}>
               <Link to={`/templates/${t.category}`} className="group block">
                 <div className="rounded-lg bg-muted p-4 transition-colors group-hover:bg-border/70 sm:p-6">
                   <div className="shadow-soft transition-transform duration-300 group-hover:-translate-y-1">
-                    <SampleInvitation id={t.id} />
+                    <TemplatePreview id={t.id} />
                   </div>
                 </div>
                 <div className="mt-4 flex items-start justify-between gap-3">

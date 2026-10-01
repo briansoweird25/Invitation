@@ -6,7 +6,8 @@ import { CategoryNav } from "@/components/templates/CategoryNav";
 import { TemplateCard } from "@/components/templates/TemplateCard";
 import { TemplatePreviewDialog } from "@/components/templates/TemplatePreviewDialog";
 import { Button } from "@/components/ui/button";
-import { getTemplate, isTemplateCategory, templates, type TemplateId } from "@/data/templates";
+import { getTemplate, templateList, type TemplateId } from "@/components/invitation/templateRegistry";
+import { isTemplateCategory } from "@/data/templates";
 import NotFound from "./NotFound";
 
 function parseAccess(value: string | null): Access {
@@ -21,7 +22,7 @@ export default function Templates() {
   if (category && !isTemplateCategory(category)) return <NotFound />;
 
   const access = parseAccess(searchParams.get("access"));
-  const visible = templates.filter(
+  const visible = templateList.filter(
     (t) =>
       (!category || t.category === category) &&
       (access === "all" || (access === "premium") === t.isPremium),

@@ -1,13 +1,14 @@
 import { Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { templateEditorPath, type TemplateInfo } from "@/data/templates";
+import type { TemplateListItem } from "@/components/invitation/templateRegistry";
+import { templateEditorPath } from "@/data/templates";
 import { AccessBadge } from "./AccessBadge";
-import { SampleInvitation } from "./SampleInvitations";
+import { TemplatePreview } from "./TemplatePreview";
 
 interface TemplateCardProps {
-  template: TemplateInfo;
-  onPreview: (id: TemplateInfo["id"]) => void;
+  template: TemplateListItem;
+  onPreview: (id: TemplateListItem["id"]) => void;
 }
 
 export function TemplateCard({ template, onPreview }: TemplateCardProps) {
@@ -20,7 +21,7 @@ export function TemplateCard({ template, onPreview }: TemplateCardProps) {
         className="relative block w-full rounded-lg bg-muted p-6 text-left transition-colors hover:bg-border/70 sm:p-7 xl:p-5"
       >
         <div className="shadow-soft transition-transform duration-300 group-hover:-translate-y-1">
-          <SampleInvitation id={template.id} />
+          <TemplatePreview id={template.id} />
         </div>
         <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-md bg-surface/90 px-2.5 py-1 text-xs opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100">
           <Eye className="size-3.5" aria-hidden="true" /> Preview

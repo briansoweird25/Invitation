@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
-import { SampleInvitation } from "@/components/templates/SampleInvitations";
+import { TemplatePreview } from "@/components/templates/TemplatePreview";
 
 export function Hero() {
   return (
@@ -35,14 +35,14 @@ export function Hero() {
         >
           <div className="relative mx-auto w-[68%] sm:w-[62%] lg:ml-[18%]">
             <div className="shadow-[0_24px_60px_-20px_rgb(29_29_27/0.35)]">
-              <SampleInvitation id="elegant-wedding" />
+              <TemplatePreview id="elegant-wedding" />
             </div>
           </div>
           <div className="absolute -left-1 bottom-[-6%] hidden w-[34%] -rotate-3 shadow-[0_16px_40px_-16px_rgb(29_29_27/0.35)] sm:block lg:left-0">
-            <SampleInvitation id="modern-birthday" />
+            <TemplatePreview id="modern-birthday" />
           </div>
           <div className="absolute -right-1 top-[8%] hidden w-[30%] rotate-3 shadow-[0_16px_40px_-16px_rgb(29_29_27/0.3)] sm:block">
-            <SampleInvitation id="floral-wedding" />
+            <TemplatePreview id="floral-wedding" />
           </div>
         </div>
       </Container>
