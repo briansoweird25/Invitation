@@ -26,6 +26,10 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "deco-party": () => import("./templates/general-party/deco-party").then((m) => ({ default: m.DecoParty })),
   "bubbly-bridal-shower": () => import("./templates/bridal-shower/bubbly-bridal-shower").then((m) => ({ default: m.BubblyBridalShower })),
   "peony-bridal-shower": () => import("./templates/bridal-shower/peony-bridal-shower").then((m) => ({ default: m.PeonyBridalShower })),
+  "ring-engagement": () => import("./templates/engagement/ring-engagement").then((m) => ({ default: m.RingEngagement })),
+  "olive-engagement": () => import("./templates/engagement/olive-engagement").then((m) => ({ default: m.OliveEngagement })),
+  "gilded-anniversary": () => import("./templates/anniversary/gilded-anniversary").then((m) => ({ default: m.GildedAnniversary })),
+  "heart-anniversary": () => import("./templates/anniversary/heart-anniversary").then((m) => ({ default: m.HeartAnniversary })),
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 
