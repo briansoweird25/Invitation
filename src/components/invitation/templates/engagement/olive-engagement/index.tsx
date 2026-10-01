@@ -15,7 +15,7 @@ export function OliveEngagement({ content, design }: TemplateProps) {
     <>
       {has("olive") && <Kit kind="botanical" id="olive-branch" design={design} className="absolute -right-[6cqw] bottom-[6cqw] w-[52cqw]" />}
       {has("olive") && <Kit kind="botanical" id="olive-branch" design={design} className="absolute -right-[10cqw] top-[2cqw] w-[30cqw] -scale-y-100" />}
-      <FitBox className="absolute inset-x-0 inset-y-[11cqw]" origin="top left" innerClassName="flex flex-col justify-center px-[11cqw]">
+      <FitBox className="absolute inset-x-[11cqw] inset-y-[11cqw]" origin="top left" innerClassName="flex flex-col justify-center">
         <p className="max-w-[56cqw] text-[2.7cqw] uppercase tracking-[0.3em]" style={{ color: accentText(design) }}>
           {content.eventTitle}
         </p>

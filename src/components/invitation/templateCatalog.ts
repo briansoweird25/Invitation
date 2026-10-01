@@ -22,6 +22,10 @@ import { ringEngagement } from "./templates/engagement/ring-engagement/meta";
 import { oliveEngagement } from "./templates/engagement/olive-engagement/meta";
 import { gildedAnniversary } from "./templates/anniversary/gilded-anniversary/meta";
 import { heartAnniversary } from "./templates/anniversary/heart-anniversary/meta";
+import { blessingBaptism } from "./templates/baptism/blessing-baptism/meta";
+import { waterBaptism } from "./templates/baptism/water-baptism/meta";
+import { lilyCommunion } from "./templates/communion/lily-communion/meta";
+import { radiantCommunion } from "./templates/communion/radiant-communion/meta";
 import { elegantWedding } from "./templates/wedding/elegant-wedding/meta";
 import { floralWedding } from "./templates/wedding/floral-wedding/meta";
 import { luxuryWedding } from "./templates/wedding/luxury-wedding/meta";
@@ -55,6 +59,10 @@ const metas: TemplateMeta[] = [
   oliveEngagement,
   gildedAnniversary,
   heartAnniversary,
+  blessingBaptism,
+  waterBaptism,
+  lilyCommunion,
+  radiantCommunion,
 ];
 
 export type TemplateId = string;

@@ -30,6 +30,10 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "olive-engagement": () => import("./templates/engagement/olive-engagement").then((m) => ({ default: m.OliveEngagement })),
   "gilded-anniversary": () => import("./templates/anniversary/gilded-anniversary").then((m) => ({ default: m.GildedAnniversary })),
   "heart-anniversary": () => import("./templates/anniversary/heart-anniversary").then((m) => ({ default: m.HeartAnniversary })),
+  "blessing-baptism": () => import("./templates/baptism/blessing-baptism").then((m) => ({ default: m.BlessingBaptism })),
+  "water-baptism": () => import("./templates/baptism/water-baptism").then((m) => ({ default: m.WaterBaptism })),
+  "lily-communion": () => import("./templates/communion/lily-communion").then((m) => ({ default: m.LilyCommunion })),
+  "radiant-communion": () => import("./templates/communion/radiant-communion").then((m) => ({ default: m.RadiantCommunion })),
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 
