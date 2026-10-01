@@ -1,22 +1,33 @@
-import { useMemo } from "react";
-import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
-import { getTemplate } from "@/components/invitation/templateRegistry";
+import { useLayoutEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { EditorLayout } from "@/components/editor/EditorLayout";
 import { Container } from "@/components/layout/Container";
+import { Button } from "@/components/ui/button";
 import { useSelectedTemplate } from "@/hooks/useSelectedTemplate";
-import { createInvitationDraft } from "@/lib/invitation";
+import { useInvitationStore } from "@/stores/invitationStore";
 
-/** Placeholder until Phase 5. It only proves the selected template reaches the renderer. */
 export default function Editor() {
+  const { invitationId } = useParams();
   const templateId = useSelectedTemplate();
-  const draft = useMemo(() => createInvitationDraft(templateId), [templateId]);
+  const init = useInvitationStore((s) => s.init);
 
-  return (
-    <Container className="py-16">
-      <h1 className="font-serif text-4xl font-medium tracking-tight">Editor</h1>
-      <p className="mt-3 text-muted-foreground">Selected template: {getTemplate(templateId)?.name}</p>
-      <div className="mt-10 max-w-sm shadow-soft">
-        <InvitationRenderer templateId={draft.templateId} content={draft.content} design={draft.design} />
-      </div>
-    </Container>
-  );
+  // Start a fresh draft from the chosen template before the first paint.
+  useLayoutEffect(() => {
+    if (!invitationId) init(templateId);
+  }, [invitationId, templateId, init]);
+
+  // Saved invitations load here once persistence exists (Phase 7).
+  if (invitationId) {
+    return (
+      <Container className="py-24">
+        <h1 className="font-serif text-4xl font-medium tracking-tight">We couldn&apos;t find that invitation</h1>
+        <p className="mt-3 text-muted-foreground">Saved invitations will open here once accounts are connected.</p>
+        <Button asChild className="mt-6">
+          <Link to="/templates">Start a new invitation</Link>
+        </Button>
+      </Container>
+    );
+  }
+
+  return <EditorLayout />;
 }

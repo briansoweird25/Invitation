@@ -21,7 +21,10 @@ export function MinimalWedding({ content, design }: TemplateProps) {
           </span>
         )}
       </h3>
-      <div className="border-t pt-[3cqw] text-[3.2cqw] leading-snug" style={{ borderColor: design.textColor }}>
+      <div
+        className={`pt-[3cqw] text-[3.2cqw] leading-snug ${design.decorations?.includes("rule") ? "border-t" : ""}`}
+        style={{ borderColor: design.textColor }}
+      >
         <p>{content.venue}</p>
         <p className="opacity-70">{joinText([content.address, content.time && formatTime(content.time)])}</p>
         {content.message && <p className="mt-[3cqw] line-clamp-2 opacity-70">{content.message}</p>}

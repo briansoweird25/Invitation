@@ -3,6 +3,12 @@ import { cn } from "@/lib/utils";
 import type { InvitationContent, InvitationDesign } from "@/types/invitation";
 import { getTemplate } from "./templateRegistry";
 
+/** Only http(s) links are drawn, and quotes are escaped so the value cannot break out of url(). */
+function safeImageUrl(url: string | undefined): string | undefined {
+  if (!url || !/^https?:\/\//i.test(url)) return undefined;
+  return `url("${url.replace(/["\\\n]/g, encodeURIComponent)}")`;
+}
+
 interface InvitationRendererProps {
   templateId: string;
   content: InvitationContent;
@@ -33,7 +39,7 @@ export function InvitationRenderer({ templateId, content, design, className }: I
         className="relative aspect-[4/5] w-full overflow-hidden"
         style={{
           backgroundColor: design.backgroundColor,
-          backgroundImage: design.backgroundImage ? `url(${design.backgroundImage})` : undefined,
+          backgroundImage: safeImageUrl(design.backgroundImage),
           backgroundSize: "cover",
           backgroundPosition: "center",
           color: design.textColor,

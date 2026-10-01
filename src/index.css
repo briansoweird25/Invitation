@@ -5,6 +5,12 @@
 @import "@fontsource/cormorant-garamond/400-italic.css";
 @import "@fontsource/cormorant-garamond/500.css";
 @import "@fontsource/cormorant-garamond/600.css";
+@import "@fontsource-variable/playfair-display";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+@import "@fontsource-variable/lora";
+@import "@fontsource-variable/lora/wght-italic.css";
+@import "@fontsource-variable/dm-sans";
+@import "@fontsource/dm-serif-display/400.css";
 
 /* Design tokens — see DESIGN.md. Application UI is quiet; invitations are expressive. */
 :root {

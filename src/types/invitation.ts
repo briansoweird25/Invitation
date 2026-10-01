@@ -25,7 +25,6 @@ export interface InvitationDesign {
   textColor: string;
   accentColor: string;
   backgroundImage?: string;
-  /** Template-specific. Unrecognized values are ignored. */
   borderStyle?: string;
   /** Template-specific decoration keys. Unrecognized keys are ignored. */
   decorations?: string[];

@@ -5,12 +5,19 @@ import { FloralWedding } from "./templates/FloralWedding";
 import { MinimalWedding } from "./templates/MinimalWedding";
 import { ModernBirthday } from "./templates/ModernBirthday";
 
+export interface DecorationOption {
+  id: string;
+  label: string;
+}
+
 export interface TemplateDefinition {
   name: string;
   category: InvitationCategory;
   description: string;
   isPremium: boolean;
   component: ComponentType<TemplateProps>;
+  /** Decorations this template can show, toggled through `design.decorations`. */
+  decorationOptions: DecorationOption[];
   /** Starting design when a user picks this template. */
   defaultDesign: InvitationDesign;
   /** Starting content, also used for gallery and landing previews. */
@@ -28,13 +35,14 @@ export const templateRegistry = {
     description: "Classic serif type, a thin border and a quiet neutral palette.",
     isPremium: false,
     component: ElegantWedding,
+    decorationOptions: [{ id: "border", label: "Thin border" }],
     defaultDesign: {
       headingFont: "Cormorant Garamond",
       bodyFont: "Inter",
       backgroundColor: "#F6F1E8",
       textColor: "#3A3128",
       accentColor: "#8A7352",
-      borderStyle: "thin",
+      decorations: ["border"],
     },
     sampleContent: {
       eventTitle: "Together with their families",
@@ -52,6 +60,7 @@ export const templateRegistry = {
     description: "Soft botanical details and an asymmetric, natural composition.",
     isPremium: true,
     component: FloralWedding,
+    decorationOptions: [{ id: "sprigs", label: "Botanical sprigs" }],
     defaultDesign: {
       headingFont: "Cormorant Garamond",
       bodyFont: "Inter",
@@ -76,12 +85,14 @@ export const templateRegistry = {
     description: "Generous whitespace, modern type and a strict grid.",
     isPremium: false,
     component: MinimalWedding,
+    decorationOptions: [{ id: "rule", label: "Divider line" }],
     defaultDesign: {
       headingFont: "Inter",
       bodyFont: "Inter",
       backgroundColor: "#FBFBF9",
       textColor: "#1D1D1B",
       accentColor: "#9B978F",
+      decorations: ["rule"],
     },
     sampleContent: {
       eventTitle: "Wedding",
@@ -99,6 +110,7 @@ export const templateRegistry = {
     description: "Bold display type, a vivid accent and playful shapes.",
     isPremium: false,
     component: ModernBirthday,
+    decorationOptions: [{ id: "shapes", label: "Playful shapes" }],
     defaultDesign: {
       headingFont: "Inter",
       bodyFont: "Inter",

@@ -10,7 +10,7 @@ export function ElegantWedding({ content, design }: TemplateProps) {
 
   return (
     <>
-      {design.borderStyle !== "none" && (
+      {design.decorations?.includes("border") && (
         <div className="absolute inset-[5cqw] border" style={{ borderColor: design.accentColor, opacity: 0.6 }} />
       )}
       <div className="absolute inset-0 flex flex-col items-center justify-center px-[14cqw] text-center">
