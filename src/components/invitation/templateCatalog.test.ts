@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { categoryConfigs } from "@/data/categories";
-import { categories } from "@/data/taxonomy";
+import { categories, layouts, styleTags } from "@/data/taxonomy";
 import { createInvitationDraft } from "@/lib/invitation";
 import { filterBase, suitsCategory } from "@/lib/templateFilters";
 import {
@@ -41,6 +41,47 @@ describe("template catalog", () => {
       "moonlight-baby-shower": "baby-shower",
     };
     for (const [id, category] of Object.entries(expected)) expect(getTemplate(id)?.category).toBe(category);
+  });
+
+  it("keeps the ids and primary categories of the second and third batches stable", () => {
+    const expected: Record<string, string> = {
+      "varsity-graduation": "graduation",
+      "golden-graduation": "graduation",
+      "chalkboard-graduation": "graduation",
+      "ticket-party": "general-party",
+      "garden-party": "general-party",
+      "deco-party": "general-party",
+      "bubbly-bridal-shower": "bridal-shower",
+      "peony-bridal-shower": "bridal-shower",
+      "ring-engagement": "engagement",
+      "olive-engagement": "engagement",
+      "gilded-anniversary": "anniversary",
+      "heart-anniversary": "anniversary",
+      "blessing-baptism": "baptism",
+      "water-baptism": "baptism",
+      "lily-communion": "communion",
+      "radiant-communion": "communion",
+      "sunset-retirement": "retirement",
+      "distinguished-retirement": "retirement",
+      "supper-dinner-party": "dinner-party",
+      "plate-dinner-party": "dinner-party",
+      "summit-corporate": "corporate-event",
+      "gala-corporate": "corporate-event",
+    };
+    for (const [id, category] of Object.entries(expected)) expect(getTemplate(id)?.category).toBe(category);
+  });
+
+  it("gives every category at least two primary templates and every template at least three Looks", () => {
+    for (const c of categories) expect(templateList.filter((t) => t.category === c).length).toBeGreaterThanOrEqual(2);
+    for (const t of templateList) expect(t.presets.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("covers every style tag and a wide range of layouts, with both free and premium templates", () => {
+    const styles = new Set(templateList.flatMap((t) => t.styles));
+    for (const tag of styleTags) expect(styles.has(tag), `style ${tag} is unused`).toBe(true);
+    expect(new Set(templateList.map((t) => t.layout)).size).toBeGreaterThanOrEqual(layouts.length - 1);
+    expect(templateList.some((t) => t.tier === "premium")).toBe(true);
+    expect(templateList.some((t) => t.tier === "free")).toBe(true);
   });
 
   it("makes every template discoverable in its primary and alsoSuits categories", () => {

@@ -301,7 +301,7 @@ Implemented (Template System v2, steps T1 and T2; details in `docs/TEMPLATE_SYST
 - **Components** (`templateLoader.ts`): lazy, one chunk per template. Each template lives in `templates/<category>/<id>/` with `index.tsx` and `meta.ts`.
 - **Presets**: curated variations of one template (a complete resolved design each). `?preset=` selects one.
 - **Capabilities**: what the editor may offer for a template (decorations, frames, patterns, washes, background image). Panels with nothing to offer are hidden.
-- **The kit** (`components/invitation/kit/`): 47 shared SVG pieces (frames, botanicals, patterns, ornaments, shapes, backgrounds) that recolor from the design.
+- **The kit** (`components/invitation/kit/`): 51 shared SVG pieces (frames, botanicals, patterns, ornaments, shapes, backgrounds) that recolor from the design.
 - **Validation**: `npm run check:templates` checks the catalog and kit against these rules.
 
 Planned: illustrations in the kit, layout primitives, gallery collections and search.
@@ -349,7 +349,7 @@ A template has one to four style tags. Tags describe the look and power gallery 
 
 ## Current templates
 
-Eleven templates exist today. The first four are the **reference templates** that proved the architecture. The next four are the first batch (T5), and the Baby Shower templates are the second (T6):
+Thirty-three templates exist today, with at least two primary templates in every category and three or more Looks (presets) each. The first four are the **reference templates** that proved the architecture. T5 added the Wedding and Birthday batch, T6 the Baby Shower batch and T7 to T13 the remaining categories. A template is also listed under every category in its `alsoSuits`:
 
 Wedding:
 - Elegant Wedding (elegant, traditional)
@@ -368,6 +368,48 @@ Baby Shower:
 - Rainbow Baby Shower (playful, colorful)
 - Moonlight Baby Shower (romantic, modern, minimal)
 
+Graduation:
+- Varsity Graduation (traditional, editorial, colorful)
+- Golden Graduation (luxury, elegant, traditional) premium
+- Chalkboard Graduation (playful, modern, colorful)
+
+General Party:
+- Ticket Party (playful, colorful, vintage)
+- Garden Party (floral, botanical, rustic)
+- Deco Party (luxury, vintage, elegant) premium
+
+Bridal Shower:
+- Bubbly Bridal Shower (modern, playful, colorful)
+- Peony Bridal Shower (romantic, floral, elegant)
+
+Engagement:
+- Ring Engagement (minimal, modern, elegant)
+- Olive Engagement (rustic, botanical, romantic)
+
+Anniversary:
+- Gilded Anniversary (luxury, traditional, elegant) premium
+- Heart Anniversary (romantic, vintage, editorial)
+
+Baptism:
+- Blessing Baptism (traditional, elegant, minimal)
+- Water Baptism (minimal, botanical, modern)
+
+Communion:
+- Lily Communion (floral, romantic, traditional)
+- Radiant Communion (traditional, vintage, luxury) premium
+
+Retirement:
+- Sunset Retirement (modern, colorful, minimal)
+- Distinguished Retirement (traditional, elegant, vintage)
+
+Dinner Party:
+- Supper Dinner Party (elegant, vintage, editorial)
+- Plate Dinner Party (rustic, modern, colorful)
+
+Corporate Event:
+- Summit Corporate (modern, minimal, editorial)
+- Gala Corporate (luxury, elegant, modern) premium
+
 ## Growing the catalog
 
 Do not build many templates before the architecture is ready. Order of work:
@@ -376,7 +418,7 @@ Do not build many templates before the architecture is ready. Order of work:
 2. Kit v1: shared frames, botanicals, patterns, ornaments, shapes and backgrounds. **Done (T2).**
 3. Palette and font-pairing libraries, plus capability-driven editor pickers. **Done (T3).**
 4. Gallery upgrade: category tabs, style filters, sort, variations in the preview, lazy previews. **Done (T4).**
-5. Template batches, one category at a time (about three to four per category), each tested in the gallery, editor and dashboard before the next. **Done so far: Wedding and Birthday have four templates each (T5) and Baby Shower has three (T6).** Next: Graduation, General Party, then the rest.
+5. Template batches, one category at a time (about three to four per category), each tested in the gallery, editor and dashboard before the next. **Done: Wedding and Birthday have four templates each (T5), Baby Shower has three (T6), Graduation and General Party have three each (T7, T8), and Bridal Shower, Engagement, Anniversary, Baptism, Communion, Retirement, Dinner Party and Corporate Event have two each (T9 to T13).** Next: a third template for the two-template categories, and illustrations.
 
 Quality is more important than quantity. Variety is important too: layouts, decoration, backgrounds and mood should differ across the catalog.
 
@@ -1020,7 +1062,10 @@ T3: Palette and font-pairing libraries, capability-driven editor pickers. Done.
 T4: Gallery upgrade (style filters, sort, variations, lazy previews, landing occasions). Done.
 T5: First template batch, Wedding and Birthday to four templates each. Done.
 T6: Baby Shower, three templates. Done.
-T7+: Further batches, one category at a time (Graduation, General Party, then the rest).
+T7: Graduation, three templates. Done.
+T8: General Party, three templates. Done.
+T9 to T13: Bridal Shower and Engagement; Anniversary; Baptism and Communion; Retirement, Dinner Party and Corporate Event, two templates each. Done.
+Next: third templates for two-template categories, illustrations in the kit, layout primitives, gallery collections and search.
 
 T1 to T4 are in place, so Phase 9 (public invitations) and Phase 11 (export) render the richer templates from the start.
 

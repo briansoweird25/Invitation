@@ -38,7 +38,7 @@ src/components/invitation/
 ├── templateTypes.ts        TemplateMeta, DesignPreset, TemplateCapabilities
 ├── templateCatalog.ts      metadata for every template (no components)
 ├── templateLoader.ts       lazy component per template id
-├── kit/                    47 shared decoration pieces
+├── kit/                    51 shared decoration pieces
 │   ├── frames.tsx  botanicals.tsx  patterns.tsx  ornaments.tsx  shapes.tsx  backgrounds.tsx
 │   ├── registry.ts         kit metadata and lookup
 │   ├── Kit.tsx             draws a piece with the invitation's colors
@@ -73,7 +73,7 @@ scripts/checkTemplates.ts   validates the catalog and kit (npm run check:templat
 
 **Validation.** Stored rows are validated on load. An unknown `category` falls back to `general-party`. The design schema accepts the new optional keys.
 
-**Templates.** Eleven templates, each with three presets, built from the kit:
+**Templates.** Thirty-three templates, each with three or more presets, built from the kit:
 
 | Template | Category | Styles | Layout | Tier |
 | --- | --- | --- | --- | --- |
@@ -88,8 +88,30 @@ scripts/checkTemplates.ts   validates the catalog and kit (npm run check:templat
 | Botanical Baby Shower | baby-shower | botanical, romantic, minimal | arch window | premium |
 | Rainbow Baby Shower | baby-shower | playful, colorful | split | free |
 | Moonlight Baby Shower | baby-shower | romantic, modern, minimal | centered classic | free |
+| Varsity Graduation | graduation | traditional, editorial, colorful | typographic poster | free |
+| Golden Graduation | graduation | luxury, elegant, traditional | framed card | premium |
+| Chalkboard Graduation | graduation | playful, modern, colorful | asymmetric | free |
+| Ticket Party | general-party | playful, colorful, vintage | ticket label | free |
+| Garden Party | general-party | floral, botanical, rustic | arch window | free |
+| Deco Party | general-party | luxury, vintage, elegant | centered classic | premium |
+| Bubbly Bridal Shower | bridal-shower | modern, playful, colorful | split | free |
+| Peony Bridal Shower | bridal-shower | romantic, floral, elegant | framed card | free |
+| Ring Engagement | engagement | minimal, modern, elegant | centered classic | free |
+| Olive Engagement | engagement | rustic, botanical, romantic | asymmetric | free |
+| Gilded Anniversary | anniversary | luxury, traditional, elegant | badge and seal | premium |
+| Heart Anniversary | anniversary | romantic, vintage, editorial | typographic poster | free |
+| Blessing Baptism | baptism | traditional, elegant, minimal | centered classic | free |
+| Water Baptism | baptism | minimal, botanical, modern | asymmetric | free |
+| Lily Communion | communion | floral, romantic, traditional | centered classic | free |
+| Radiant Communion | communion | traditional, vintage, luxury | badge and seal | premium |
+| Sunset Retirement | retirement | modern, colorful, minimal | typographic poster | free |
+| Distinguished Retirement | retirement | traditional, elegant, vintage | framed card | free |
+| Supper Dinner Party | dinner-party | elegant, vintage, editorial | framed card | free |
+| Plate Dinner Party | dinner-party | rustic, modern, colorful | badge and seal | free |
+| Summit Corporate | corporate-event | modern, minimal, editorial | editorial grid | free |
+| Gala Corporate | corporate-event | luxury, elegant, modern | split | premium |
 
-The first four are the reference templates that proved the architecture. The next four are the first batch (T5) and the last three are the Baby Shower batch (T6). Each has a clearly different layout, type, decoration and mood.
+The first four are the reference templates that proved the architecture. The next four are the first batch (T5) the next three are the Baby Shower batch (T6), and the rest are the Graduation, General Party, Bridal Shower, Engagement, Anniversary, Baptism, Communion, Retirement, Dinner Party and Corporate Event batches (T7 to T13). Each has a clearly different layout, type, decoration and mood.
 
 **Helpers for content robustness.** `fitSize(base, text, comfortableChars)` in `lib/invitationFormat.ts` shrinks a font size for long names so they stay inside the card. `pickReadable(background, ...candidates)` in `lib/color.ts` picks the most readable text color for text drawn on an accent-colored shape (a ribbon, a seal). `accentText(design)` returns the accent color when it is readable as text on the background and the main text color otherwise, so a soft pastel accent never makes a label unreadable. The T5 and T6 templates also clamp optional lines and keep their content in a padded box that clips instead of running over the frame.
 
@@ -347,7 +369,7 @@ interface KitPiece {
 }
 ```
 
-Kit v1 holds 47 pieces: 8 frames, 7 botanicals, 8 patterns, 8 ornaments (dividers, corner flourish, laurel, seal, sparkles, ribbon), 8 shapes and 8 backgrounds (soft, dawn and diagonal washes, vignette, paper grain, linen, watercolor, foil sheen). Templates draw a piece with `<Kit kind="botanical" id="sprig" design={design} className="..." />`, which picks the right design color.
+Kit v1.1 holds 51 pieces: 8 frames, 7 botanicals, 8 patterns, 10 ornaments (dividers, corner flourish, laurel, seal, sparkles, ribbon, cross, sun rays), 10 shapes (adds heart and droplet) and 8 backgrounds (soft, dawn and diagonal washes, vignette, paper grain, linen, watercolor, foil sheen). Templates draw a piece with `<Kit kind="botanical" id="sprig" design={design} className="..." />`, which picks the right design color.
 
 Pieces are bundled together for now because each is tiny. Revisit lazy loading when the kit passes about a hundred pieces.
 
@@ -476,12 +498,40 @@ Template work runs as its own track alongside the numbered phases in `CLAUDE.md`
 | --- | --- | --- |
 | T1 | Taxonomy, category config, catalog/loader split, presets, migrate the four reference templates | **Done.** |
 | T2 | Kit v1: frames, botanicals, patterns, ornaments and dividers, shapes, backgrounds | **Done.** 47 pieces, used by the reference templates. |
-| T3 | Palette and font-pairing libraries, plus the editor pickers | **Done.** 13 palettes, 15 pairings, 22 fonts, Looks, thumbnail pickers. |
+| T3 | Palette and font-pairing libraries, plus the editor pickers | **Done.** 21 palettes (8 added in T7), 18 pairings (3 added), 22 fonts, Looks, thumbnail pickers. |
 | T4 | Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews | **Done.** Plus sort, URL state and the landing Occasions section. |
 | T5 | First template batch: Wedding and Birthday to four templates each | **Done.** Luxury Wedding, Confetti Birthday, Vintage Birthday, Editorial Birthday. |
 | T6 | Baby Shower batch | **Done.** Botanical, Rainbow and Moonlight Baby Shower. |
-| T7+ | Further batches, one category at a time | Aim for three to four templates per category. Suggested order: Graduation, General Party, then the rest. |
+| T7 | Graduation batch | **Done.** Varsity, Golden and Chalkboard Graduation. Kit v1.1 (heart, droplet, cross, sun rays), new palettes and pairings. |
+| T8 | General Party batch | **Done.** Ticket, Garden and Deco Party. |
+| T9 | Bridal Shower and Engagement | **Done.** Bubbly and Peony Bridal Shower; Ring and Olive Engagement. |
+| T10 | Anniversary | **Done.** Gilded and Heart Anniversary. |
+| T11 | Baptism and Communion | **Done.** Blessing and Water Baptism; Lily and Radiant Communion. |
+| T12 | Retirement | **Done.** Sunset and Distinguished Retirement. |
+| T13 | Dinner Party and Corporate Event | **Done.** Supper and Plate Dinner Party; Summit and Gala Corporate. |
+| Next | Third templates for the two-template categories, illustrations, layout primitives, collections and search | Not started. |
 
 T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) will render the richer templates from day one.
+
+## Category discovery
+
+A template has one primary `category` and may list more in `alsoSuits`. `lib/templateFilters.ts` is the single place that decides discoverability: `suitsCategory`, `templatesInCategory` and `categoriesInUse` count a template once per category it suits, never as a duplicate record. Category pages list primary templates first. A template opened from another category's page starts with that category's sample content and saves that category (the editor URL carries `?category=` only when it differs from the primary). Templates without `alsoSuits` appear only in their primary category.
+
+## Long content: FitBox
+
+Every template places its text in one or more `FitBox` regions (`components/invitation/layouts/FitBox.tsx`). Text wraps at the region's width, with `overflow-wrap: anywhere` so unbroken words wrap too. If the content is still taller than the region, the whole block shrinks uniformly (never below 0.4) rather than being truncated or running over a frame. User text is never clipped. Rules for template authors:
+
+- Place the region inside the frame margin (frames sit 4 to 7.5% in). Put horizontal padding on the region, not on the inner block, when `origin="top left"`, because inner padding scales with the content.
+- Use `fitSize(base, text, comfortableChars)` on names and titles, then let `FitBox` handle the rest.
+- Never use `truncate`, `line-clamp` or `break-words` (it overrides `anywhere`).
+- Show every field the category offers, including `additionalDetails`, and skip empty ones.
+
+## Reviewing templates
+
+`npm run dev`, then open `/dev/templates?ids=a,b&content=long&cols=4&width=300`. It renders every Look of the chosen templates with sample or stress content (`long`, `unbroken`, `empty`, `baddate`). The route exists only in development.
+
+## Tests
+
+Unit tests (`npm run test`) cover the taxonomy, filters, catalog invariants (ids and categories are stable, at least two primary templates per category, three Looks each, every style tag used), date formatting, fit math and a static render of every template, Look, category and stress content. Browser tests (`npm run test:e2e`) cover the gallery, editor capabilities for every template, Looks, autosave and reload, legacy invitations, mobile overflow, and long content in four font sets at desktop and mobile widths. They run against a mocked Supabase.
 
 Do not build all templates at once. Build a batch, test it in the gallery, the editor and the dashboard, then continue.

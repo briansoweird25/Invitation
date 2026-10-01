@@ -94,14 +94,15 @@ RSVP
 
 ## Template library (growing)
 
-Eleven templates exist today (four weddings, four birthdays and three baby showers), each with three presets, built on a shared decoration kit of 47 pieces. The template system supports:
+Thirty-three templates exist today across all 13 categories (at least two per category), each with three or more presets, built on a shared decoration kit of 51 pieces. The template system supports:
 
 - 13 categories: Wedding, Birthday, Baby Shower, Bridal Shower, Engagement, Anniversary, Graduation, Baptism, Communion, Retirement, Dinner Party, Corporate Event, General Party
 - 13 style tags: Elegant, Romantic, Floral, Modern, Minimal, Luxury, Vintage, Rustic, Botanical, Playful, Colorful, Traditional, Editorial
 - Variations (presets) of each template
 - A shared decoration kit: frames, botanicals, patterns, ornaments, shapes and illustrations
-- 13 curated color palettes and 15 typography pairings, with thumbnail pickers in the editor
-- A gallery with style filters, sorting, variations and lazy previews
+- 21 curated color palettes and 18 typography pairings, with thumbnail pickers in the editor
+- A gallery with style filters, sorting, variations and lazy previews. A template is listed in every category it suits (`alsoSuits`) and never duplicated.
+- A fitted layout region (`FitBox`) so long names, titles and messages shrink to fit instead of overlapping frames
 
 See `docs/TEMPLATE_SYSTEM.md` and `DESIGN.md` (Part B).
 
@@ -228,6 +229,17 @@ Users must only be able to access their own private invitation data.
 Public users may view published invitations.
 
 ---
+
+# Testing
+
+```bash
+npm run check:templates   # validates the catalog, kit, palettes, pairings and contrast
+npm run test              # unit tests (vitest): taxonomy, filters, catalog, formatting, render of every template
+npm run test:e2e          # browser tests (Playwright) against a build with a mocked Supabase
+npm run test:all          # all of the above
+```
+
+Browser tests never contact Supabase. They use an in-memory mock (`tests/e2e/helpers/mockSupabase.ts`), so they say nothing about the real project's tables, policies or storage. `npm run dev` also serves a visual contact sheet of every template and Look at `/dev/templates` (development only, see `docs/TEMPLATE_SYSTEM.md`).
 
 # Development Phases
 
