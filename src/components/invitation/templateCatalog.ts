@@ -1,5 +1,6 @@
 import { categoryConfigs } from "@/data/categories";
-import { categories, type InvitationCategory } from "@/data/taxonomy";
+import { type InvitationCategory } from "@/data/taxonomy";
+import { categoriesInUse, suitsCategory } from "@/lib/templateFilters";
 import type { InvitationContent, InvitationDesign } from "@/types/invitation";
 import type { DesignPreset, TemplateMeta } from "./templateTypes";
 import { botanicalBabyShower } from "./templates/baby-shower/botanical-baby-shower/meta";
@@ -57,22 +58,46 @@ export function getTemplate(id: string | null | undefined): TemplateListItem | u
   return id ? byId.get(id) : undefined;
 }
 
-/** Categories that currently have at least one active template, in taxonomy order. */
+/** Categories with at least one discoverable active template (primary or `alsoSuits`), in taxonomy order. */
 export function categoriesWithTemplates(): InvitationCategory[] {
-  return categories.filter((c) => templateList.some((t) => t.category === c));
+  return categoriesInUse(templateList);
+}
+
+/** Active templates that belong in a category's page. A template is never duplicated; it is listed by reference. */
+export function templatesForCategory(category: InvitationCategory): TemplateListItem[] {
+  return templateList.filter((t) => suitsCategory(t, category));
+}
+
+/** The category an invitation started from `template` gets: the requested one when the template suits it, else the primary. */
+export function resolveCategory(template: TemplateMeta, requested?: string | null): InvitationCategory {
+  return requested && suitsCategory(template, requested as InvitationCategory) ? (requested as InvitationCategory) : template.category;
 }
 
 export function getPreset(template: TemplateMeta, presetId?: string | null): DesignPreset {
   return template.presets.find((p) => p.id === presetId) ?? template.presets[0];
 }
 
-/** The invitation content a template starts with: the category sample, with the template's own overrides. */
-export function sampleContentFor(template: TemplateMeta): InvitationContent {
-  return { ...categoryConfigs[template.category].sampleContent, ...template.sampleContent };
+/**
+ * The sample content a template starts with. In its primary category that is the category sample plus the
+ * template's own overrides. In any other category it is that category's sample, so a birthday template
+ * shown under Baby Shower starts with baby shower wording.
+ */
+export function sampleContentFor(template: TemplateMeta, category?: string | null): InvitationContent {
+  const resolved = resolveCategory(template, category);
+  const base = categoryConfigs[resolved].sampleContent;
+  return resolved === template.category ? { ...base, ...template.sampleContent } : { ...base };
 }
 
 /** Content and design for previews and for starting a new invitation. */
-export function startingPoint(template: TemplateMeta, presetId?: string | null): { content: InvitationContent; design: InvitationDesign } {
+export function startingPoint(
+  template: TemplateMeta,
+  presetId?: string | null,
+  category?: string | null,
+): { content: InvitationContent; design: InvitationDesign; category: InvitationCategory } {
   const preset = getPreset(template, presetId);
-  return { content: sampleContentFor(template), design: { ...preset.design, presetId: preset.id } };
+  return {
+    content: sampleContentFor(template, category),
+    design: { ...preset.design, presetId: preset.id },
+    category: resolveCategory(template, category),
+  };
 }

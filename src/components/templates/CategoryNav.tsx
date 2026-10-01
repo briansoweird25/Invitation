@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { categoriesWithTemplates, templateList } from "@/components/invitation/templateCatalog";
+import { categoriesWithTemplates, templateList, templatesForCategory } from "@/components/invitation/templateCatalog";
 import { getCategoryConfig } from "@/data/categories";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +15,7 @@ export function CategoryNav({ search }: { search: string }) {
     ...categoriesWithTemplates().map((id) => ({
       to: `/templates/${id}`,
       label: getCategoryConfig(id).label,
-      count: templateList.filter((t) => t.category === id).length,
+      count: templatesForCategory(id).length,
     })),
   ];
 

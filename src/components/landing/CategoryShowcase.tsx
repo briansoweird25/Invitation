@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { categoriesWithTemplates, templateList } from "@/components/invitation/templateCatalog";
+import { categoriesWithTemplates, templatesForCategory } from "@/components/invitation/templateCatalog";
 import { Container } from "@/components/layout/Container";
 import { TemplatePreview } from "@/components/templates/TemplatePreview";
 import { tintFor } from "@/components/templates/TemplateCard";
@@ -21,14 +21,16 @@ export function CategoryShowcase() {
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {available.map((id) => {
             const config = categoryConfigs[id];
-            const inCategory = templateList.filter((t) => t.category === id);
-            const lead = inCategory.find((t) => t.featured) ?? inCategory[0];
+            const inCategory = templatesForCategory(id);
+            // Prefer a template whose primary category this is, so the preview shows what the category is best known for.
+            const primary = inCategory.filter((t) => t.category === id);
+            const lead = primary.find((t) => t.featured) ?? primary[0] ?? inCategory[0];
             return (
               <li key={id}>
                 <Link to={`/templates/${id}`} className="group grid h-full grid-cols-[7.5rem_1fr] items-center gap-5 rounded-lg border p-4 transition-colors hover:border-subtle-foreground sm:grid-cols-[9rem_1fr]">
                   <span className="block rounded-md p-3" style={{ backgroundColor: tintFor(lead.presets[0].design.backgroundColor) }}>
                     <span className="block shadow-soft transition-transform duration-300 group-hover:-translate-y-0.5">
-                      <TemplatePreview id={lead.id} />
+                      <TemplatePreview id={lead.id} category={id} />
                     </span>
                   </span>
                   <span>

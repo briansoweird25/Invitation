@@ -36,8 +36,9 @@ export default function Templates() {
   const sort = parseSort(searchParams.get("sort"));
   const selectedStyles = parseStyles(searchParams.get("style"));
 
-  const base = filterBase(templateList, { category: category && isTemplateCategory(category) ? category : undefined, access });
-  const visible = sortTemplates(filterByStyles(base, selectedStyles), sort);
+  const activeCategory = category && isTemplateCategory(category) ? category : undefined;
+  const base = filterBase(templateList, { category: activeCategory, access });
+  const visible = sortTemplates(filterByStyles(base, selectedStyles), sort, activeCategory);
 
   // Filters live in the URL so a filtered gallery can be shared and survives a reload.
   const setParam = (key: string, value: string | null) => {
@@ -106,7 +107,7 @@ export default function Templates() {
                 className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
                 style={{ animationDelay: `${Math.min(i, 7) * 60}ms` }}
               >
-                <TemplateCard template={t} onPreview={setPreviewId} />
+                <TemplateCard template={t} onPreview={setPreviewId} category={activeCategory} />
               </li>
             ))}
           </ul>
@@ -123,7 +124,7 @@ export default function Templates() {
         </div>
       )}
 
-      <TemplatePreviewDialog template={getTemplate(previewId)} onClose={() => setPreviewId(null)} />
+      <TemplatePreviewDialog template={getTemplate(previewId)} onClose={() => setPreviewId(null)} category={activeCategory} />
     </Container>
   );
 }

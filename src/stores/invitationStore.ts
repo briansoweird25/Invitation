@@ -21,7 +21,7 @@ interface InvitationState {
   design: InvitationDesign;
   rsvp: RSVPSettings;
   status: InvitationStatus;
-  init: (templateId: string, presetId?: string) => void;
+  init: (templateId: string, presetId?: string, category?: string) => void;
   load: (invitation: Invitation) => void;
   setId: (id: string) => void;
   setTitle: (title: string) => void;
@@ -37,8 +37,8 @@ const markDirty = () => useEditorStore.getState().setDirty(true);
 export const useInvitationStore = create<InvitationState>((set) => ({
   id: null,
   ...createInvitationDraft("elegant-wedding"),
-  init: (templateId, presetId) => {
-    set({ id: null, ...createInvitationDraft(templateId, presetId) });
+  init: (templateId, presetId, category) => {
+    set({ id: null, ...createInvitationDraft(templateId, presetId, category) });
     useEditorStore.getState().setDirty(false);
   },
   load: (invitation) => {

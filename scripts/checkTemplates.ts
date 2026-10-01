@@ -62,7 +62,11 @@ for (const t of templateList) {
   ids.add(t.id);
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(t.id)) fail(`${at}: id is not kebab-case`);
   if (!(categories as readonly string[]).includes(t.category)) fail(`${at}: unknown category ${t.category}`);
-  for (const c of t.alsoSuits ?? []) if (!(categories as readonly string[]).includes(c)) fail(`${at}: unknown alsoSuits ${c}`);
+  for (const c of t.alsoSuits ?? []) {
+    if (!(categories as readonly string[]).includes(c)) fail(`${at}: unknown alsoSuits ${c}`);
+    if (c === t.category) fail(`${at}: alsoSuits repeats the primary category ${c}`);
+  }
+  if (new Set(t.alsoSuits ?? []).size !== (t.alsoSuits ?? []).length) fail(`${at}: alsoSuits has duplicates`);
   if (t.styles.length < 1 || t.styles.length > 4 || !t.styles.every(isTemplateStyle)) fail(`${at}: needs 1 to 4 known style tags`);
   if (!(layouts as readonly string[]).includes(t.layout)) fail(`${at}: unknown layout ${t.layout}`);
   if (!getTemplateComponent(t.id)) fail(`${at}: no component registered in templateLoader.ts`);

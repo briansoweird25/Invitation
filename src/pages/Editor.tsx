@@ -13,7 +13,7 @@ type LoadFailure = { id: string; reason: "notfound" | "error" };
 
 export default function Editor() {
   const { invitationId } = useParams();
-  const { templateId, presetId } = useSelectedTemplate();
+  const { templateId, presetId, category } = useSelectedTemplate();
   const userId = useAuthStore((s) => s.user?.id);
   const init = useInvitationStore((s) => s.init);
   const load = useInvitationStore((s) => s.load);
@@ -22,8 +22,8 @@ export default function Editor() {
 
   // New invitation: start a fresh draft from the chosen template before the first paint.
   useLayoutEffect(() => {
-    if (!invitationId) init(templateId, presetId);
-  }, [invitationId, templateId, presetId, init]);
+    if (!invitationId) init(templateId, presetId, category);
+  }, [invitationId, templateId, presetId, category, init]);
 
   // Existing invitation: fetch it, unless the store already holds it (just created by autosave).
   useEffect(() => {
