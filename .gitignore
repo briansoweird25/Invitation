@@ -6,3 +6,6 @@ dist
 !.env.example
 *.tsbuildinfo
 .DS_Store
+dist-e2e
+test-results
+playwright-report
