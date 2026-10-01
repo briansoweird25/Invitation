@@ -17,7 +17,7 @@ export function AuthShell({ title, description, children, footer }: AuthShellPro
         <p className="mt-3 text-muted-foreground">{description}</p>
         {!isSupabaseConfigured && import.meta.env.DEV && (
           <p role="status" className="mt-6 rounded-md border border-accent/40 p-3 text-sm text-muted-foreground">
-            Supabase isn&apos;t configured. Copy <code>.env.example</code> to <code>.env</code> and add your project URL and anon key.
+            Supabase isn&apos;t configured. Copy <code>.env.example</code> to <code>.env</code> and add your project URL and publishable key.
           </p>
         )}
         <div className="mt-8">{children}</div>

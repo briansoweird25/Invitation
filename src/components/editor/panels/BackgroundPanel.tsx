@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { fieldError, imageUrlSchema } from "@/lib/validation";
 import { useInvitationStore } from "@/stores/invitationStore";
 import { ColorControl } from "../controls/ColorControl";
+import { ImageUpload } from "../controls/ImageUpload";
 import { Field } from "@/components/ui/field";
 import { PanelSection } from "../PanelSection";
 
@@ -14,7 +15,8 @@ export function BackgroundPanel() {
   return (
     <PanelSection id="background" title="Background">
       <ColorControl id="bg-color" label="Background color" value={design.backgroundColor} onChange={(backgroundColor) => update({ backgroundColor })} />
-      <Field id="bg-image" label="Background image link" helper="Optional. Photo uploads arrive with accounts." error={error}>
+      <ImageUpload id="bg-upload" onUploaded={(backgroundImage) => update({ backgroundImage })} />
+      <Field id="bg-image" label="Or paste an image link" helper="Optional." error={error}>
         <Input
           id="bg-image"
           type="url"

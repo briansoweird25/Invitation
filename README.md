@@ -269,6 +269,14 @@ Monetization.
 
 ---
 
+# Setup
+
+1. `npm install`
+2. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
+3. Apply the SQL files in `supabase/migrations/` (see `supabase/README.md`).
+
+---
+
 # Development Commands
 
 The exact commands depend on the project setup.

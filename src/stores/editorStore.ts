@@ -14,11 +14,13 @@ interface EditorState {
   zoom: number;
   isDirty: boolean;
   isSaving: boolean;
+  saveError: boolean;
   togglePanel: (panel: EditorPanel) => void;
   setMobileSheet: (sheet: MobileSheet | null) => void;
   setZoom: (zoom: number) => void;
   setDirty: (isDirty: boolean) => void;
   setSaving: (isSaving: boolean) => void;
+  setSaveError: (saveError: boolean) => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -27,6 +29,7 @@ export const useEditorStore = create<EditorState>((set) => ({
   zoom: 1,
   isDirty: false,
   isSaving: false,
+  saveError: false,
   togglePanel: (panel) =>
     set((s) => ({
       openPanels: s.openPanels.includes(panel) ? s.openPanels.filter((p) => p !== panel) : [...s.openPanels, panel],
@@ -35,4 +38,5 @@ export const useEditorStore = create<EditorState>((set) => ({
   setZoom: (zoom) => set({ zoom: Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom)) }),
   setDirty: (isDirty) => set({ isDirty }),
   setSaving: (isSaving) => set({ isSaving }),
+  setSaveError: (saveError) => set({ saveError }),
 }));

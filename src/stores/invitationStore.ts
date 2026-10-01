@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { TemplateId } from "@/components/invitation/templateRegistry";
 import { createInvitationDraft } from "@/lib/invitation";
 import type {
+  Invitation,
   InvitationCategory,
   InvitationContent,
   InvitationDesign,
@@ -12,6 +13,8 @@ import { useEditorStore } from "./editorStore";
 
 /** The invitation being edited. The editor writes here and the renderer reads from here. */
 interface InvitationState {
+  /** Null until the first save creates the row. */
+  id: string | null;
   title: string;
   templateId: string;
   category: InvitationCategory;
@@ -20,6 +23,8 @@ interface InvitationState {
   rsvp: RSVPSettings;
   status: InvitationStatus;
   init: (templateId: TemplateId) => void;
+  load: (invitation: Invitation) => void;
+  setId: (id: string) => void;
   setTitle: (title: string) => void;
   updateContent: (patch: Partial<InvitationContent>) => void;
   updateDesign: (patch: Partial<InvitationDesign>) => void;
@@ -29,11 +34,26 @@ interface InvitationState {
 const markDirty = () => useEditorStore.getState().setDirty(true);
 
 export const useInvitationStore = create<InvitationState>((set) => ({
+  id: null,
   ...createInvitationDraft("elegant-wedding"),
   init: (templateId) => {
-    set(createInvitationDraft(templateId));
+    set({ id: null, ...createInvitationDraft(templateId) });
     useEditorStore.getState().setDirty(false);
   },
+  load: (invitation) => {
+    set({
+      id: invitation.id,
+      title: invitation.title,
+      templateId: invitation.templateId,
+      category: invitation.category,
+      content: invitation.content,
+      design: invitation.design,
+      rsvp: invitation.rsvp,
+      status: invitation.status,
+    });
+    useEditorStore.getState().setDirty(false);
+  },
+  setId: (id) => set({ id }),
   setTitle: (title) => {
     set({ title });
     markDirty();

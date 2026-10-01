@@ -1,3 +1,4 @@
+import { useAutosave } from "@/hooks/useAutosave";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useEditorStore } from "@/stores/editorStore";
 import { ContentSidebar } from "./ContentSidebar";
@@ -11,6 +12,7 @@ import { MobileSheetPanel, MobileToolbar } from "./MobileControls";
  * Only one layout is mounted at a time, so field ids stay unique.
  */
 export function EditorLayout() {
+  useAutosave();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const sheetOpen = useEditorStore((s) => s.mobileSheet !== null);
 

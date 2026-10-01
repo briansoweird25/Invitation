@@ -43,3 +43,37 @@ export function validateForm<S extends z.ZodType>(
   }
   return { errors: errors as FieldErrors<z.infer<S>> };
 }
+
+// Shapes of the JSON stored in the database. Used to check rows when they are loaded.
+export const invitationContentSchema = z.object({
+  eventTitle: z.string().default(""),
+  hostNames: z.string().default(""),
+  date: z.string().default(""),
+  time: z.string().default(""),
+  venue: z.string().default(""),
+  address: z.string().default(""),
+  message: z.string().default(""),
+  additionalDetails: z.string().optional(),
+});
+
+export const invitationDesignSchema = z.object({
+  headingFont: z.string(),
+  bodyFont: z.string(),
+  backgroundColor: z.string(),
+  textColor: z.string(),
+  accentColor: z.string(),
+  backgroundImage: z.string().optional(),
+  borderStyle: z.string().optional(),
+  decorations: z.array(z.string()).optional(),
+});
+
+export const rsvpSettingsSchema = z.object({
+  enabled: z.boolean().default(false),
+  deadline: z.string().optional(),
+  contactName: z.string().optional(),
+  contactEmail: z.string().optional(),
+  contactPhone: z.string().optional(),
+  maxGuests: z.number().optional(),
+});
+
+export const uuidSchema = z.uuid();
