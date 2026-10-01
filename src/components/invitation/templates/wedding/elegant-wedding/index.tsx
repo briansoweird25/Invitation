@@ -1,13 +1,15 @@
-import { dateParts, formatTime, joinText, splitHostNames } from "@/lib/invitationFormat";
+import { dateParts, fitSize, formatTime, joinText, splitHostNames } from "@/lib/invitationFormat";
 import { resolveFont } from "@/lib/fonts";
 import type { TemplateProps } from "@/types/invitation";
 import { Kit } from "../../../kit/Kit";
+import { FitBox } from "../../../layouts/FitBox";
 
 export function ElegantWedding({ content, design }: TemplateProps) {
   const [first, second] = splitHostNames(content.hostNames);
   const d = dateParts(content.date);
   const dateText = d ? `${d.weekday}, ${d.day} ${d.month} ${d.year}` : content.date;
   const heading = { fontFamily: resolveFont(design.headingFont) };
+  const longest = Math.max(first?.length ?? 0, second?.length ?? 0);
   const flourish = design.decorations?.includes("flourish") ?? false;
   const corners = design.decorations?.includes("corner-flourish") ?? false;
 
@@ -21,13 +23,13 @@ export function ElegantWedding({ content, design }: TemplateProps) {
           <Kit kind="ornament" id="corner-flourish" design={design} className="absolute bottom-[8cqw] left-[8cqw] size-[12cqw] -rotate-90" />
         </>
       )}
-      <div className="absolute inset-0 flex flex-col items-center justify-center px-[14cqw] text-center">
+      <FitBox className={corners ? "absolute inset-x-0 inset-y-[21cqw]" : "absolute inset-x-0 inset-y-[11cqw]"} innerClassName="flex flex-col items-center justify-center px-[14cqw] text-center">
         {content.eventTitle && (
           <p className="text-[2.6cqw] uppercase tracking-[0.3em]" style={{ color: design.accentColor }}>
             {content.eventTitle}
           </p>
         )}
-        <h3 className="mt-[7cqw] text-[13cqw] font-medium leading-[0.95]" style={heading}>
+        <h3 className="mt-[7cqw] font-medium leading-[0.95]" style={{ ...heading, fontSize: fitSize(13, "x".repeat(longest), 9) }}>
           {first}
           {second && (
             <>
@@ -50,9 +52,10 @@ export function ElegantWedding({ content, design }: TemplateProps) {
           {joinText([content.venue, content.time && formatTime(content.time)])}
         </p>
         {content.message && (
-          <p className="mt-[5cqw] line-clamp-4 text-[3.2cqw] italic leading-relaxed opacity-80">{content.message}</p>
+          <p className="mt-[5cqw] text-[3.2cqw] italic leading-relaxed opacity-80">{content.message}</p>
         )}
-      </div>
+        {content.additionalDetails && <p className="mt-[3cqw] text-[2.6cqw] uppercase tracking-[0.16em] opacity-60">{content.additionalDetails}</p>}
+      </FitBox>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { resolveFont } from "@/lib/fonts";
 import type { TemplateProps } from "@/types/invitation";
 import { useUid } from "../../../kit/types";
 import { Kit } from "../../../kit/Kit";
+import { FitBox } from "../../../layouts/FitBox";
 
 /** A crescent moon is the circle minus a second, offset circle, so washes and patterns still show through the cut. */
 function Crescent({ color, className }: { color: string; className?: string }) {
@@ -39,23 +40,23 @@ export function MoonlightBabyShower({ content, design }: TemplateProps) {
           <Kit kind="ornament" id="sparkle" design={design} className="absolute left-[24cqw] top-[44cqw] size-[5cqw]" />
         </>
       )}
-      <div className="absolute inset-x-0 bottom-[10cqw] top-[56cqw] flex flex-col items-center justify-center overflow-hidden px-[14cqw] text-center">
+      <FitBox className="absolute inset-x-0 bottom-[10cqw] top-[56cqw]" innerClassName="flex flex-col items-center justify-center px-[14cqw] text-center">
         {content.eventTitle && (
-          <p className="line-clamp-2 text-[2.6cqw] uppercase tracking-[0.3em]" style={{ color: accentText(design) }}>
+          <p className="text-[2.6cqw] uppercase tracking-[0.3em]" style={{ color: accentText(design) }}>
             {content.eventTitle}
           </p>
         )}
-        <h3 className="mt-[2.5cqw] max-w-full break-words leading-[1.02]" style={{ ...names, fontSize: fitSize(11, content.hostNames, 10) }}>
+        <h3 className="mt-[2.5cqw] max-w-full leading-[1.02]" style={{ ...names, fontSize: fitSize(11, content.hostNames, 10) }}>
           {content.hostNames}
         </h3>
         <Kit kind="ornament" id="divider-dots" design={design} className="my-[3.5cqw] h-auto w-[24cqw]" />
         <p className="uppercase tracking-[0.18em]" style={{ ...heading, fontSize: fitSize(4, dateLine, 18) }}>
           {dateLine}
         </p>
-        <p className="mt-[1.6cqw] line-clamp-2 text-[2.6cqw] uppercase tracking-[0.18em] opacity-80">{joinText([content.time && formatTime(content.time), content.venue])}</p>
-        {content.message && <p className="mt-[3.5cqw] line-clamp-2 max-w-[62cqw] text-[2.8cqw] italic leading-relaxed opacity-85">{content.message}</p>}
-        {content.additionalDetails && <p className="mt-[1.6cqw] line-clamp-1 max-w-[62cqw] text-[2.2cqw] opacity-65">{content.additionalDetails}</p>}
-      </div>
+        <p className="mt-[1.6cqw] text-[2.6cqw] uppercase tracking-[0.18em] opacity-80">{joinText([content.time && formatTime(content.time), content.venue])}</p>
+        {content.message && <p className="mt-[3.5cqw] max-w-[62cqw] text-[2.8cqw] italic leading-relaxed opacity-85">{content.message}</p>}
+        {content.additionalDetails && <p className="mt-[1.6cqw] max-w-[62cqw] text-[2.2cqw] opacity-65">{content.additionalDetails}</p>}
+      </FitBox>
     </>
   );
 }

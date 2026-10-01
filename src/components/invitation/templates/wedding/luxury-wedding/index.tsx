@@ -3,6 +3,7 @@ import { pickReadable } from "@/lib/color";
 import { resolveFont } from "@/lib/fonts";
 import type { TemplateProps } from "@/types/invitation";
 import { Kit } from "../../../kit/Kit";
+import { FitBox } from "../../../layouts/FitBox";
 
 /** Framed card with a foil monogram seal, wide-tracked capitals and fine rules. */
 export function LuxuryWedding({ content, design }: TemplateProps) {
@@ -24,9 +25,9 @@ export function LuxuryWedding({ content, design }: TemplateProps) {
           <Kit kind="ornament" id="corner-flourish" design={design} className={`${corner} bottom-[9cqw] left-[9cqw] -rotate-90`} />
         </>
       )}
-      <div className="absolute inset-x-0 inset-y-[11cqw] flex flex-col items-center justify-center overflow-hidden px-[15cqw] text-center">
+      <FitBox className={has("corners") ? "absolute inset-x-0 inset-y-[22cqw]" : "absolute inset-x-0 inset-y-[11cqw]"} innerClassName="flex flex-col items-center justify-center px-[15cqw] text-center">
         {content.eventTitle && (
-          <p className="line-clamp-2 text-[2.4cqw] uppercase tracking-[0.34em]" style={{ color: design.accentColor }}>
+          <p className="text-[2.4cqw] uppercase tracking-[0.34em]" style={{ color: design.accentColor }}>
             {content.eventTitle}
           </p>
         )}
@@ -38,7 +39,7 @@ export function LuxuryWedding({ content, design }: TemplateProps) {
             </span>
           </div>
         )}
-        <h3 className="mt-[6cqw] break-words uppercase leading-[1.15] tracking-[0.16em]" style={{ ...heading, fontSize: fitSize(8.6, first.length > (second?.length ?? 0) ? first : (second ?? ""), 9) }}>
+        <h3 className="mt-[6cqw] uppercase leading-[1.15] tracking-[0.16em]" style={{ ...heading, fontSize: fitSize(8.6, first.length > (second?.length ?? 0) ? first : (second ?? ""), 9) }}>
           {first}
           {second && (
             <span className="my-[1.6cqw] block text-[3.4cqw] tracking-normal" style={{ color: design.accentColor }}>
@@ -60,10 +61,10 @@ export function LuxuryWedding({ content, design }: TemplateProps) {
         <p className="mt-[1.4cqw] uppercase tracking-[0.14em]" style={{ ...heading, fontSize: fitSize(5, dateLine, 16) }}>
           {dateLine}
         </p>
-        <p className="mt-[2cqw] line-clamp-2 text-[2.6cqw] uppercase tracking-[0.22em] opacity-80">{joinText([content.venue, content.time && formatTime(content.time)])}</p>
-        {content.message && <p className="mt-[5cqw] line-clamp-2 max-w-[62cqw] text-[3cqw] italic leading-relaxed opacity-80">{content.message}</p>}
-        {content.additionalDetails && <p className="mt-[3cqw] line-clamp-1 max-w-[62cqw] text-[2.3cqw] uppercase tracking-[0.16em] opacity-60">{content.additionalDetails}</p>}
-      </div>
+        <p className="mt-[2cqw] text-[2.6cqw] uppercase tracking-[0.22em] opacity-80">{joinText([content.venue, content.time && formatTime(content.time)])}</p>
+        {content.message && <p className="mt-[5cqw] max-w-[62cqw] text-[3cqw] italic leading-relaxed opacity-80">{content.message}</p>}
+        {content.additionalDetails && <p className="mt-[3cqw] max-w-[62cqw] text-[2.3cqw] uppercase tracking-[0.16em] opacity-60">{content.additionalDetails}</p>}
+      </FitBox>
     </>
   );
 }

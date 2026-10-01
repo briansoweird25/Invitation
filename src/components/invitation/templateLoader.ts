@@ -21,6 +21,11 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 
+/** Loads a template component without React.lazy. Used where a component is needed outside rendering, such as tests. */
+export async function loadTemplateComponent(id: string): Promise<TemplateComponent | undefined> {
+  return (await loaders[id]?.())?.default;
+}
+
 const cache = new Map<string, LazyExoticComponent<TemplateComponent>>();
 
 /** Returns a lazily loaded component for a template id, or undefined when there is none. */
