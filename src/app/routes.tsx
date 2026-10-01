@@ -14,6 +14,7 @@ const Register = lazy(() => import("@/pages/Register"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const DashboardSettings = lazy(() => import("@/pages/DashboardSettings"));
 const InvitationRsvps = lazy(() => import("@/pages/InvitationRsvps"));
+const PremiumReturn = lazy(() => import("@/pages/PremiumReturn"));
 const Editor = lazy(() => import("@/pages/Editor"));
 const PublicInvitation = lazy(() => import("@/pages/PublicInvitation"));
 const DevTemplateSheet = import.meta.env.DEV ? lazy(() => import("@/pages/DevTemplateSheet")) : null;
@@ -45,6 +46,8 @@ const routes: RouteObject[] = [
               { path: "dashboard", element: page(<Dashboard />) },
               { path: "dashboard/invitations", element: <Navigate to="/dashboard" replace /> },
               { path: "dashboard/invitations/:invitationId/rsvps", element: page(<InvitationRsvps />) },
+              { path: "premium/success", element: page(<PremiumReturn />) },
+              { path: "premium/cancelled", element: page(<PremiumReturn />) },
               { path: "dashboard/settings", element: page(<DashboardSettings />) },
             ],
           },

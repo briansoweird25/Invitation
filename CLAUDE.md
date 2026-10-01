@@ -176,6 +176,7 @@ src/
 │   │   ├── layouts/        reusable layout primitives (planned)
 │   │   └── templates/      <category>/<template-id>/ with index.tsx and meta.ts
 │   ├── dashboard/
+│   ├── premium/            unlock panel, dialog and gate
 │   └── rsvp/
 ├── pages/
 ├── stores/
@@ -184,6 +185,10 @@ src/
 ├── types/
 ├── data/                   taxonomy, categories, palettes, font pairings
 └── main.tsx
+
+supabase/
+├── migrations/             schema, RLS, purchases, templates mirror
+└── functions/              Edge Functions for Stripe (create-checkout-session, confirm-checkout-session, stripe-webhook)
 
 docs/
 └── TEMPLATE_SYSTEM.md
@@ -944,21 +949,26 @@ The export system should reuse the invitation renderer where practical.
 
 Implement after the core product is stable.
 
+Implemented (Phase 12): a one-time **Premium** purchase through Stripe Checkout. See `README.md` (Phase 12 and "Premium setup").
+
 Free:
-- Basic templates
-- Create invitations
-- Publish invitation
-- Basic RSVP
+- Free templates and Looks, fully usable
+- Create, customize, publish and share invitations
+- RSVP
+- PNG and PDF export
 
-Premium:
-- Premium templates
-- HD export
-- PDF export
-- No watermark
-- Advanced customization
-- Premium decorations
+Premium (one payment, no subscription):
+- Premium templates (a template's `tier`)
+- Premium Looks (a Look's `tier`, also on free templates)
 
-Do not add payments before the core flow works.
+Rules:
+- The template catalog is the only source of Free/Premium. Do not hardcode template ids in components; use `lib/premium.ts`.
+- Access is stored in Supabase (`purchases`), written only by Edge Functions after Stripe confirms payment, read-only for the owner through Row Level Security.
+- Access is enforced by the database (a trigger on `invitations`), not only by the interface. Hiding buttons is a courtesy.
+- Never lock or change an existing invitation because its template is Premium.
+- Stripe secrets and the service-role key live only in Edge Function secrets, never in the browser or in `VITE_` variables.
+- A change to a template's tier needs a new mirror migration: `npm run templates:sql -- <name>`.
+- Not built: subscriptions, coupons, refunds, tax, invoices, HD or watermark tiers.
 
 ---
 
@@ -1042,13 +1052,13 @@ Phase 11: Export (done: PNG and PDF, high resolution)
 - PDF
 - HD
 
-Phase 12: AI
-- Optional invitation-writing assistance
+Phase 12: Premium access and Stripe payments (done: one-time purchase, server-side enforcement)
+- Premium templates and Looks
+- Stripe Checkout, webhook, purchase records
+- Database enforcement with Row Level Security
 
-Phase 13: Monetization
-- Premium templates
-- Premium features
-- Payments
+Phase 13: AI
+- Optional invitation-writing assistance
 
 ---
 

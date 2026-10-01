@@ -15,12 +15,15 @@ interface EditorState {
   isDirty: boolean;
   isSaving: boolean;
   saveError: boolean;
+  /** The database refused a save because it uses Premium the account does not own. */
+  premiumRequired: boolean;
   togglePanel: (panel: EditorPanel) => void;
   setMobileSheet: (sheet: MobileSheet | null) => void;
   setZoom: (zoom: number) => void;
   setDirty: (isDirty: boolean) => void;
   setSaving: (isSaving: boolean) => void;
   setSaveError: (saveError: boolean) => void;
+  setPremiumRequired: (premiumRequired: boolean) => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -30,6 +33,7 @@ export const useEditorStore = create<EditorState>((set) => ({
   isDirty: false,
   isSaving: false,
   saveError: false,
+  premiumRequired: false,
   togglePanel: (panel) =>
     set((s) => ({
       openPanels: s.openPanels.includes(panel) ? s.openPanels.filter((p) => p !== panel) : [...s.openPanels, panel],
@@ -39,4 +43,5 @@ export const useEditorStore = create<EditorState>((set) => ({
   setDirty: (isDirty) => set({ isDirty }),
   setSaving: (isSaving) => set({ isSaving }),
   setSaveError: (saveError) => set({ saveError }),
+  setPremiumRequired: (premiumRequired) => set({ premiumRequired }),
 }));

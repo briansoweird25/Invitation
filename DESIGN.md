@@ -291,7 +291,9 @@ Template grid
 - **Categories** come from the taxonomy (B2). Only categories that have templates are shown.
 - **Style filters** use the 13 style tags (B2).
 - **Sort:** Featured, New, A to Z.
-- **Cards** show the invitation first. Information: name, category, style tags (one or two), Free or Premium, "Use template".
+- **Cards** show the invitation first. Information: name, category, style tags (one or two), Free or Premium, "Use template". A Premium card the account does not own says "Unlock template".
+- **Premium marking:** the same small text badge everywhere ("Premium", accent color, never color alone). A Premium Look on a free template adds "· Premium" to its name and a small lock on its thumbnail while it is locked. A locked Look can always be previewed; choosing it opens the Unlock dialog.
+- **Unlock:** one pattern, `UnlockPremiumPanel`: three short perks, a single primary "Unlock Premium" button (with the price when configured), "Taking you to secure checkout…" while it starts, an inline error, "Log in to unlock Premium" when signed out, and "You already have Premium" when owned. It appears inline in the preview dialog and the editor gate, and in a dialog from the Looks panel. No upsell banners, no countdowns, no pop-ups on load.
 - **Backdrop:** each card sits on a soft tint matched to the template's palette so the grid has color and rhythm.
 - **Variations:** the preview dialog shows the template's presets as swatches. Choosing one switches the large preview.
 - **Collections** (for example "Spring florals", "Black tie", "Kids' parties") can group templates across categories on the landing page and at the top of the gallery.

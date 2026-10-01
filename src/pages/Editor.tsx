@@ -4,8 +4,11 @@ import { EditorLayout } from "@/components/editor/EditorLayout";
 import { Container } from "@/components/layout/Container";
 import { RouteFallback } from "@/components/layout/RouteFallback";
 import { Button } from "@/components/ui/button";
+import { PremiumGate } from "@/components/premium/PremiumGate";
 import { useSelectedTemplate } from "@/hooks/useSelectedTemplate";
 import { getOwnInvitation, LOAD_ERROR_MESSAGE } from "@/lib/invitationApi";
+import { startNeedsPremium } from "@/lib/premium";
+import { usePremiumAccess } from "@/stores/accessStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useInvitationStore } from "@/stores/invitationStore";
 
@@ -19,6 +22,7 @@ export default function Editor() {
   const load = useInvitationStore((s) => s.load);
   const storeId = useInvitationStore((s) => s.id);
   const [failure, setFailure] = useState<LoadFailure>();
+  const { hasPremium, status: accessStatus } = usePremiumAccess();
 
   // New invitation: start a fresh draft from the chosen template before the first paint.
   useLayoutEffect(() => {
@@ -42,6 +46,12 @@ export default function Editor() {
       cancelled = true;
     };
   }, [invitationId, userId, load]);
+
+  // A new invitation from a Premium template or Look needs Premium. Existing invitations are never gated.
+  if (!invitationId && startNeedsPremium(templateId, presetId)) {
+    if (accessStatus === "unknown" || accessStatus === "loading") return <RouteFallback label="Checking your access…" />;
+    if (!hasPremium) return <PremiumGate templateId={templateId} presetId={presetId} category={category} />;
+  }
 
   if (!invitationId || storeId === invitationId) return <EditorLayout />;
   const reason = failure?.id === invitationId ? failure.reason : undefined;

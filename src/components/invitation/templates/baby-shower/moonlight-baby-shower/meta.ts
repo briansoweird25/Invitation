@@ -55,6 +55,7 @@ export const moonlightBabyShower: TemplateMeta = {
     },
     {
       id: "plum-night",
+      tier: "premium",
       name: "Plum Night",
       design: {
         ...base,

@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { createInvitation, releaseImage, SAVE_ERROR_MESSAGE, updateInvitation } from "@/lib/invitationApi";
+import { createInvitation, PremiumRequiredError, releaseImage, SAVE_ERROR_MESSAGE, updateInvitation } from "@/lib/invitationApi";
 import type { InvitationDraft } from "@/lib/invitation";
+import { useAccessStore } from "@/stores/accessStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useEditorStore } from "@/stores/editorStore";
 import { useInvitationStore } from "@/stores/invitationStore";
@@ -68,6 +69,14 @@ export function useAutosave() {
         else schedule();
         if (createdId && !disposed) navigate(`/editor/${createdId}`, { replace: true });
       } catch (e) {
+        if (e instanceof PremiumRequiredError) {
+          // Retrying cannot help: ask the person to unlock Premium, and pause saving until they do.
+          useEditorStore.getState().setSaveError(true);
+          useEditorStore.getState().setPremiumRequired(true);
+          // The server's answer is the truth: correct this browser's idea of the account's access.
+          void useAccessStore.getState().refresh();
+          return;
+        }
         const wasFailing = useEditorStore.getState().saveError;
         useEditorStore.getState().setSaveError(true);
         if (!wasFailing) toast.error(e instanceof Error ? e.message : SAVE_ERROR_MESSAGE);
@@ -90,6 +99,22 @@ export function useAutosave() {
       }
     });
 
+    // Coming back after a Premium refusal (for example from the unlock page): try the pending changes again.
+    if (useEditorStore.getState().premiumRequired) {
+      useEditorStore.getState().setPremiumRequired(false);
+      useEditorStore.getState().setSaveError(false);
+      schedule(100);
+    }
+
+    // Once access arrives (a purchase finished in another tab, or a refresh), saving resumes.
+    const unsubscribeAccess = useAccessStore.subscribe((state, prev) => {
+      if (state.hasPremium && !prev.hasPremium && useEditorStore.getState().premiumRequired) {
+        useEditorStore.getState().setPremiumRequired(false);
+        useEditorStore.getState().setSaveError(false);
+        schedule(100);
+      }
+    });
+
     // Save promptly when the tab is hidden, and warn before closing with unsaved work.
     const onVisibility = () => document.visibilityState === "hidden" && void save();
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -102,6 +127,7 @@ export function useAutosave() {
     return () => {
       disposed = true;
       unsubscribe();
+      unsubscribeAccess();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("beforeunload", onBeforeUnload);
       void save(); // flush pending edits when leaving the editor

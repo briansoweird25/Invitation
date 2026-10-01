@@ -90,6 +90,11 @@ const toItem = (meta: TemplateMeta): TemplateListItem => ({ ...meta, isPremium: 
 
 const byId = new Map(metas.map((m) => [m.id, toItem(m)]));
 
+/** Every template, retired ones included. Server-side rules must know all of them, because saved invitations keep using retired templates. */
+export function allTemplates(): TemplateListItem[] {
+  return [...byId.values()];
+}
+
 /** Active templates, in catalog order. Retired templates are excluded. */
 export const templateList: TemplateListItem[] = [...byId.values()].filter((t) => t.status === "active");
 

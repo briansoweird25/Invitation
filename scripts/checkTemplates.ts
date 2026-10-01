@@ -10,6 +10,8 @@ import { contrastRatio } from "../src/lib/color";
 import { fontPairings } from "../src/data/fontPairings";
 import { palettes } from "../src/data/palettes";
 import { getFont } from "../src/lib/fonts";
+import { readdirSync, readFileSync } from "node:fs";
+import { generateTemplatesSql } from "./templatesSql";
 
 const errors: string[] = [];
 const warnings: string[] = [];
@@ -98,6 +100,22 @@ for (const t of templateList) {
     if (text === null || text < 4.5) fail(`${pat}: text contrast ${text?.toFixed(2)} is below 4.5`);
     if (accent === null) fail(`${pat}: invalid accent color`);
     else if (accent < 3) warn(`${pat}: accent contrast ${accent.toFixed(2)} is below 3 (fine for shapes, not for text)`);
+  }
+}
+
+// Premium: a free template's default Look must stay free, or "Use this template" would start a locked invitation.
+for (const t of templateList) {
+  if (t.tier === "free" && t.presets[0].tier === "premium") fail(`${t.id}: the default (first) Look of a free template cannot be premium`);
+}
+
+// The database enforces Premium from a mirror of the catalog. The newest mirror migration must match it exactly.
+const migrationsDir = "supabase/migrations";
+const mirrors = readdirSync(migrationsDir).filter((f) => /_templates_mirror.*\.sql$/.test(f)).sort();
+if (mirrors.length === 0) fail("no templates_mirror migration found; run `npm run templates:sql -- <name>`");
+else {
+  const latest = mirrors[mirrors.length - 1];
+  if (readFileSync(`${migrationsDir}/${latest}`, "utf8") !== generateTemplatesSql()) {
+    fail(`${latest} is out of date with the catalog's Free/Premium facts; run \`npm run templates:sql -- <name>\` to write a new mirror migration`);
   }
 }
 

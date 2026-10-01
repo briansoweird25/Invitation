@@ -220,7 +220,7 @@ interface TemplateMeta {
   alsoSuits?: InvitationCategory[];
   styles: TemplateStyle[];            // 1 to 4 tags
   layout: LayoutId;                   // see DESIGN.md B4
-  tier: "free" | "premium";           // maps to the current isPremium flag
+  tier: "free" | "premium";           // premium templates need a Premium purchase to start (see "Premium" below)
   status: "active" | "retired";       // retired templates still render for existing invitations
   featured?: boolean;
   addedAt: string;                    // ISO date, drives "New"
@@ -231,6 +231,8 @@ interface TemplateMeta {
 ```
 
 `TemplateDefinition` is the `TemplateMeta` plus the lazily loaded component.
+
+A `DesignPreset` may also carry `tier?: "free" | "premium"`. Every Look of a premium template is premium; on a free template, `tier: "premium"` marks a single Look. The first Look of a free template must stay free.
 
 ## 3.4 Capabilities
 
@@ -512,6 +514,15 @@ Template work runs as its own track alongside the numbered phases in `CLAUDE.md`
 | Next | Third templates for the two-template categories, illustrations, layout primitives, collections and search | Not started. |
 
 T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) render the richer templates from day one.
+
+## Premium
+
+Free or Premium is decided here and nowhere else: a template's `tier` and a Look's optional `tier`. `lib/premium.ts` reads them for the interface (badges, locks, the gate); the database enforces them.
+
+- The `templates` table mirrors the catalog (`is_premium`, and `configuration.premiumPresets` for premium Looks on free templates). A trigger on `invitations` reads it to refuse Premium templates and Looks to accounts without a paid purchase.
+- **When you add a template, change a tier, or mark a Look premium, run `npm run templates:sql -- <short-name>`** to write a new mirror migration, and apply it. `npm run check:templates` fails if the newest `*_templates_mirror*.sql` differs from the catalog.
+- Never rename or remove a template id that existing invitations use; retire it (`status: "retired"`) so its Free/Premium facts stay in the mirror.
+- Existing invitations are never locked by a tier change. The trigger only checks when an invitation is created, or switches template or Look.
 
 ## Exports
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { getCategoryConfig } from "@/data/categories";
 import { templateEditorPath } from "@/data/templates";
 import { styleLabel } from "@/lib/templateFilters";
+import { usePremiumAccess } from "@/stores/accessStore";
 import { AccessBadge } from "./AccessBadge";
 import { LazyMount } from "./LazyMount";
 import { TemplatePreview } from "./TemplatePreview";
@@ -22,6 +23,7 @@ export const tintFor = (color: string) => `color-mix(in srgb, ${color} 22%, var(
 
 export function TemplateCard({ template, onPreview, category }: TemplateCardProps) {
   const defaultDesign = template.presets[0].design;
+  const { hasPremium } = usePremiumAccess();
   const shownCategory = category ?? template.category;
   const chosenCategory = category && category !== template.category ? category : undefined;
   const meta = [getCategoryConfig(shownCategory).label, ...template.styles.slice(0, 2).map(styleLabel)].join(" · ");
@@ -54,7 +56,7 @@ export function TemplateCard({ template, onPreview, category }: TemplateCardProp
       </div>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{template.description}</p>
       <Button asChild variant="secondary" className="mt-4 w-full sm:w-auto">
-        <Link to={templateEditorPath(template.id, undefined, chosenCategory)}>Use template</Link>
+        <Link to={templateEditorPath(template.id, undefined, chosenCategory)}>{template.isPremium && !hasPremium ? "Unlock template" : "Use template"}</Link>
       </Button>
     </article>
   );

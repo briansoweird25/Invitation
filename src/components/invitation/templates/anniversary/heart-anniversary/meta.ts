@@ -28,7 +28,7 @@ export const heartAnniversary: TemplateMeta = {
   presets: [
     { id: "rouge", name: "Rouge", design: { ...base, backgroundColor: "#FBF1EC", textColor: "#4A2227", accentColor: "#B23A48", secondaryColor: "#E58A94" } },
     { id: "sepia", name: "Sepia", design: { ...base, backgroundColor: "#F1E6CF", textColor: "#3B2E1F", accentColor: "#8B3A2F", secondaryColor: "#C48A5A", background: { id: "paper-grain" } } },
-    { id: "plum", name: "Plum", design: { ...base, backgroundColor: "#2F1F3A", textColor: "#F6E8EE", accentColor: "#F2B8C6", secondaryColor: "#C57BA0" } },
+    { id: "plum", name: "Plum", tier: "premium", design: { ...base, backgroundColor: "#2F1F3A", textColor: "#F6E8EE", accentColor: "#F2B8C6", secondaryColor: "#C57BA0" } },
   ],
   sampleContent: { eventTitle: "Celebrating 25 years", hostNames: "Margaret & Robert", date: "2026-11-14", venue: "The Heritage Club" },
 };

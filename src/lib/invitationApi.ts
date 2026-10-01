@@ -16,6 +16,7 @@ export const PUBLISH_ERROR_MESSAGE = "We couldn't publish your invitation. Pleas
 export const UNPUBLISH_ERROR_MESSAGE = "We couldn't unpublish your invitation. Please try again.";
 export const PUBLISH_NEEDS_NAMES_MESSAGE = "Add the host names in the editor before publishing.";
 export const PUBLIC_LOAD_ERROR_MESSAGE = "We couldn't load this invitation. Please try again.";
+export const PREMIUM_REQUIRED_MESSAGE = "This template or Look is part of Premium. Unlock Premium to save it.";
 export const LOAD_ERROR_MESSAGE = "We couldn't open your invitation. Please try again.";
 
 const rowSchema = z.object({
@@ -57,6 +58,13 @@ function client() {
   return supabase;
 }
 
+/** The database refuses Premium templates and Looks to accounts without a paid purchase (SQLSTATE PT402, HTTP 402). */
+export class PremiumRequiredError extends Error {}
+
+function isPremiumRequired(error: { code?: string; message?: string; status?: number }): boolean {
+  return error.code === "PT402" || error.status === 402 || error.message === "premium_required";
+}
+
 function fail(error: unknown, message: string): never {
   if (import.meta.env.DEV) console.error("[invitations]", error);
   throw new Error(message);
@@ -80,13 +88,19 @@ export async function createInvitation(userId: string, draft: InvitationDraft): 
     .insert({ user_id: userId, ...writableColumns(draft) })
     .select()
     .single();
-  if (error) fail(error, SAVE_ERROR_MESSAGE);
+  if (error) {
+    if (isPremiumRequired(error)) throw new PremiumRequiredError(PREMIUM_REQUIRED_MESSAGE);
+    fail(error, SAVE_ERROR_MESSAGE);
+  }
   return toInvitation(data);
 }
 
 export async function updateInvitation(id: string, draft: InvitationDraft): Promise<void> {
   const { error } = await client().from("invitations").update(writableColumns(draft)).eq("id", id);
-  if (error) fail(error, SAVE_ERROR_MESSAGE);
+  if (error) {
+    if (isPremiumRequired(error)) throw new PremiumRequiredError(PREMIUM_REQUIRED_MESSAGE);
+    fail(error, SAVE_ERROR_MESSAGE);
+  }
 }
 
 /**

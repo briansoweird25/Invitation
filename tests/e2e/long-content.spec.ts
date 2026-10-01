@@ -41,7 +41,7 @@ async function settle(page: Page) {
 for (const template of templateList) {
   test(`${template.id}: long, unbroken and missing content stays inside the frame`, async ({ page, context }) => {
     const errors = trackErrors(page);
-    await installMockSupabase(context);
+    await installMockSupabase(context, { premium: true });
     await login(page);
     await page.goto(`/editor/new?template=${template.id}`);
     await page.waitForSelector("#event-hostNames");

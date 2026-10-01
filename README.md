@@ -234,7 +234,8 @@ Public users may view published invitations.
 
 ```bash
 npm run check:templates   # validates the catalog, kit, palettes, pairings and contrast
-npm run test              # unit tests (vitest): taxonomy, filters, catalog, formatting, render of every template
+npm run test              # unit tests (vitest): taxonomy, filters, catalog, formatting, render of every template,
+                          #   the Stripe and purchase rules, and the database migrations run in an in-process Postgres (PGlite)
 npm run test:e2e          # browser tests (Playwright) against a build with a mocked Supabase
 npm run test:all          # all of the above
 ```
@@ -306,11 +307,40 @@ Export. **Done** for PNG and PDF. The "HD" option is not separate: every export 
 
 ## Phase 12
 
-AI features.
+Premium access and one-time Stripe payments. **Done**, tested against mocks only: no real Stripe or Supabase project was reachable from the development environment, and no real payment was made. Verify against a Stripe test-mode account before going live (see "Premium setup" below).
+
+- **Model:** one product, "Premium", bought once with Stripe Checkout. No subscriptions, coupons, refunds, tax handling or invoices. Free templates and Looks stay fully usable. Premium is marked in the gallery, the preview and the editor, and can be previewed by anyone.
+- **Source of truth:** the template catalog. A template's `tier`, and an optional `tier: "premium"` on a single Look, decide what is Premium (`lib/premium.ts` only reads the catalog). Five Looks on free templates are Premium today; every Look of a Premium template is. The default (first) Look of a free template must stay free (`check:templates` enforces it).
+- **Where access lives:** Supabase table `purchases` (`status`, Stripe session, payment intent and customer ids, amount, currency, dates). Row Level Security lets a signed-in user **read only their own** rows; nobody writes from a browser. The `app` only reads whether a paid row exists (`stores/accessStore.ts`), so signing in again, on any device, restores access.
+- **Server-side enforcement:** a database trigger on `invitations` (migration `20260101000400_premium_purchases.sql`) refuses creating an invitation with a Premium template or Look, or switching to one, unless the account has a paid purchase. The API answers HTTP 402 (`PT402`). Existing invitations are never locked: an update that keeps the same template and Look always passes, so existing and published invitations keep working, can be edited, published and exported, and an invitation on a Premium template can switch between that template's Looks. The Free/Premium facts come from the `templates` table, which mirrors the catalog; `npm run templates:sql -- <name>` writes the mirror migration and `check:templates` fails if it is stale.
+- **Stripe:** two Supabase Edge Functions hold the secrets. `create-checkout-session` (signed-in users) creates a one-time Checkout Session for the price configured on the server, bound to the user, and reuses an open session instead of creating a second; it returns "owned" when the account already has Premium. `stripe-webhook` verifies Stripe's signature over the raw body (timestamp tolerance 5 minutes), then records paid, failed and expired sessions idempotently. `confirm-checkout-session` lets the success page settle at once by asking Stripe about the returned session (it only acts on a session that belongs to the signed-in user). The browser never sends a price or a "paid" flag.
+- **Export:** runs in the browser from data the owner already holds, so it is not separately gated. Premium invitations can only be held by accounts that own Premium or that created them before Premium existed, and both can export.
+- **Not locked, by design:** an invitation made before payments, whatever its template. A premium Look chosen by editing colors by hand is just customization: only the Look itself is gated.
+- **Duplicate payments:** the app and the server avoid them (an owner is never sent to pay; an open checkout is reused). If two payments somehow succeed, both are recorded and a warning is logged; refunds are manual in the Stripe Dashboard and are not built.
+- **Pages:** "Unlock Premium" in gallery previews, the editor gate (a Premium template or Look in the URL), locked Looks in the editor, `/pricing`, `/dashboard/settings` ("Check my purchase"), and the return pages `/premium/success` and `/premium/cancelled`.
+
+### Premium setup
+
+1. In Stripe (test mode first): create a Product "Premium" with a **one-time** Price. Note the price id (`price_...`).
+2. Apply the migrations in `supabase/migrations/` (`npx supabase db push`).
+3. Set the function secrets (never in the browser, never in `VITE_` variables):
+
+   ```bash
+   npx supabase secrets set STRIPE_SECRET_KEY=sk_test_... STRIPE_PREMIUM_PRICE_ID=price_... \
+     STRIPE_WEBHOOK_SECRET=whsec_... SITE_URL=https://your-site.example
+   ```
+
+   `SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are provided to functions by Supabase. `ALLOWED_ORIGINS` (comma separated, default `SITE_URL`) lists the origins allowed to call the functions, for example to add `http://localhost:5173`.
+4. Deploy: `npx supabase functions deploy create-checkout-session confirm-checkout-session stripe-webhook`. `supabase/config.toml` turns the platform JWT check off for `stripe-webhook` only, because Stripe calls it without a login; the function requires a valid Stripe signature instead.
+5. In Stripe, Developers, Webhooks, add the endpoint `https://<project-ref>.supabase.co/functions/v1/stripe-webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed` and `checkout.session.expired`. Copy its signing secret into `STRIPE_WEBHOOK_SECRET`.
+6. Optional, in `.env`: `VITE_PREMIUM_PRICE_LABEL="$19"` shows the price on the Unlock button. The real price is whatever the Stripe Price says.
+7. Rehearse in test mode with card `4242 4242 4242 4242`, or locally with the Stripe CLI (`stripe listen --forward-to <function url>`).
+
+Environment summary: browser `.env` has only `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` and the optional `VITE_PREMIUM_PRICE_LABEL`. Function secrets are `STRIPE_SECRET_KEY`, `STRIPE_PREMIUM_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`, `SITE_URL` (and optionally `ALLOWED_ORIGINS`).
 
 ## Phase 13
 
-Monetization.
+AI features (optional).
 
 ---
 

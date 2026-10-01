@@ -27,7 +27,10 @@ export function Navbar() {
 
   // While the session is being restored, show neither "Log in" nor "Dashboard" to avoid a flash.
   const accountLinks = signedIn
-    ? [{ to: "/dashboard", label: "Dashboard" }]
+    ? [
+        { to: "/dashboard", label: "Dashboard" },
+        { to: "/dashboard/settings", label: "Settings" },
+      ]
     : status === "unauthenticated"
       ? [{ to: "/login", label: "Log in" }]
       : [];

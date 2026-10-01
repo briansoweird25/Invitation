@@ -11,7 +11,8 @@
     "check:templates": "tsx --tsconfig tsconfig.app.json scripts/checkTemplates.ts",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:all": "npm run check:templates && npm run test && npm run test:e2e"
+    "test:all": "npm run check:templates && npm run test && npm run test:e2e",
+    "templates:sql": "tsx --tsconfig tsconfig.app.json scripts/templatesSql.ts"
   },
   "dependencies": {
     "@fontsource-variable/baloo-2": "^5.3.0",
@@ -54,6 +55,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.56.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.3",

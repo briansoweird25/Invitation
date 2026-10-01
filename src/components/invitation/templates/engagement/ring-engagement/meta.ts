@@ -28,7 +28,7 @@ export const ringEngagement: TemplateMeta = {
   presets: [
     { id: "ivory-gold", name: "Ivory & Gold", design: { ...base, backgroundColor: "#FAF7F0", textColor: "#2B2823", accentColor: "#A8812F", secondaryColor: "#C9B27C" } },
     { id: "slate-rose", name: "Slate & Rose", design: { ...base, backgroundColor: "#F4F2F1", textColor: "#2A3038", accentColor: "#B8707A", secondaryColor: "#5E6B7B" } },
-    { id: "midnight", name: "Midnight", design: { ...base, backgroundColor: "#16202F", textColor: "#EFE9DC", accentColor: "#D9B867", secondaryColor: "#9FB1CC", background: { id: "foil-sheen" } } },
+    { id: "midnight", name: "Midnight", tier: "premium", design: { ...base, backgroundColor: "#16202F", textColor: "#EFE9DC", accentColor: "#D9B867", secondaryColor: "#9FB1CC", background: { id: "foil-sheen" } } },
   ],
   sampleContent: { eventTitle: "They said yes", hostNames: "Ana & Luis", date: "2026-03-07", time: "18:30", venue: "Casa Verde" },
 };

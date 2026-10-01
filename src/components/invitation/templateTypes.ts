@@ -29,6 +29,11 @@ export interface DesignPreset {
   /** Unique within the template. */
   id: string;
   name: string;
+  /**
+   * "premium" marks a Look that needs Premium access even on a free template. Every Look of a premium template
+   * needs it already. The first Look of a free template is its default and must stay free. Omitted means free.
+   */
+  tier?: "free" | "premium";
   /** Resolved values, exactly as stored in an invitation. The first preset of a template is its default. */
   design: InvitationDesign;
 }

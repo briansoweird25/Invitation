@@ -12,7 +12,7 @@ test.describe("the editor reflects each template's capabilities", () => {
   for (const template of templateList) {
     test(template.id, async ({ page, context }) => {
       const errors = trackErrors(page);
-      await installMockSupabase(context);
+      await installMockSupabase(context, { premium: true });
       await login(page);
       await page.goto(`/editor/new?template=${template.id}`);
       await expect(page.locator("#event-hostNames")).toBeVisible();
@@ -45,7 +45,7 @@ test.describe("the editor reflects each template's capabilities", () => {
 test.describe("looks, autosave and reload", () => {
   test("choosing a look and editing text is saved and survives a reload", async ({ page, context }) => {
     const errors = trackErrors(page);
-    const mock = await installMockSupabase(context);
+    const mock = await installMockSupabase(context, { premium: true });
     await login(page);
     await page.goto("/editor/new?template=golden-graduation");
     await open(page, "Looks");
@@ -67,7 +67,7 @@ test.describe("looks, autosave and reload", () => {
   });
 
   test("a decoration switch changes the design and is saved", async ({ page, context }) => {
-    const mock = await installMockSupabase(context);
+    const mock = await installMockSupabase(context, { premium: true });
     await login(page);
     await page.goto("/editor/new?template=garden-party");
     await open(page, "Decorations");
@@ -82,7 +82,7 @@ test.describe("looks, autosave and reload", () => {
 test.describe("existing invitations keep working", () => {
   test("an invitation with a legacy border decoration, an unknown category and a later-added template all open", async ({ page, context }) => {
     const errors = trackErrors(page);
-    const mock = await installMockSupabase(context);
+    const mock = await installMockSupabase(context, { premium: true });
     mock.db.set("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1", seedRow("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1", "Legacy border", "Ava & Noah", { design: { headingFont: "Cormorant Garamond", bodyFont: "Inter", backgroundColor: "#F6F1E8", textColor: "#3A3128", accentColor: "#8A7352", decorations: ["border"] } }));
     mock.db.set("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2", seedRow("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2", "Odd category", "Sam", { category: "space-party" }));
     mock.db.set("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3", seedRow("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3", "Grad night", "Jordan Lee", { template_id: "chalkboard-graduation", category: "graduation" }));
@@ -115,7 +115,7 @@ test.describe("mobile", () => {
 
   test("dashboard and editor fit the screen", async ({ page, context }) => {
     const errors = trackErrors(page);
-    const mock = await installMockSupabase(context);
+    const mock = await installMockSupabase(context, { premium: true });
     mock.db.set("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1", seedRow("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1", "Gala", "Northwind Co.", { template_id: "gala-corporate", category: "corporate-event" }));
     await login(page);
     await page.goto("/dashboard");

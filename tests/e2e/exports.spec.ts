@@ -72,7 +72,7 @@ test.describe("PNG and PDF from the editor", () => {
   });
 
   test("a Look chosen in the editor is what gets exported", async ({ page, context }) => {
-    await installMockSupabase(context);
+    await installMockSupabase(context, { premium: true });
     await login(page);
     await page.goto("/editor/new?template=golden-graduation");
     const looks = page.getByRole("button", { name: "Looks", exact: true });

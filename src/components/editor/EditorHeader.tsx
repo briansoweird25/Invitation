@@ -13,6 +13,7 @@ export function EditorHeader() {
   const isDirty = useEditorStore((s) => s.isDirty);
   const isSaving = useEditorStore((s) => s.isSaving);
   const saveError = useEditorStore((s) => s.saveError);
+  const premiumRequired = useEditorStore((s) => s.premiumRequired);
   const isSaved = useInvitationStore((s) => s.id !== null);
 
   return (
@@ -37,7 +38,7 @@ export function EditorHeader() {
 
       <div className="ml-auto flex items-center gap-3">
         <p className={cn("text-xs sm:text-sm", saveError ? "text-destructive" : "text-muted-foreground")} role="status">
-          {saveError ? "Couldn't save · retrying" : isSaving ? "Saving…" : isDirty ? "Unsaved changes" : isSaved ? "✓ Saved" : "Draft"}
+          {premiumRequired ? "Needs Premium to save" : saveError ? "Couldn't save · retrying" : isSaving ? "Saving…" : isDirty ? "Unsaved changes" : isSaved ? "✓ Saved" : "Draft"}
         </p>
         <ExportMenu />
         <Button size="sm" disabled title="Publish from your dashboard.">

@@ -1,4 +1,5 @@
 import type { BrowserContext, Page } from "@playwright/test";
+import { getTemplate } from "../../../src/components/invitation/templateCatalog";
 
 /**
  * An in-memory stand-in for the parts of Supabase the app uses: auth, the invitations table and storage.
@@ -48,7 +49,31 @@ export interface MockSupabase {
   log: { removed: string[]; uploads: string[] };
   /** Guest replies, in insertion order. */
   rsvps: Row[];
-  failNext: { patch: boolean; list: boolean; rsvpSubmit: boolean };
+  /** Purchases of the signed-in test user. Only the "server" (these helpers) writes them, as in production. */
+  purchases: Row[];
+  /** Stripe Checkout Sessions the mocked create-checkout-session function made, with the request body it received. */
+  checkouts: MockCheckout[];
+  failNext: { patch: boolean; list: boolean; rsvpSubmit: boolean; checkout: boolean };
+  /** What Stripe and its webhook would do. The browser can do none of this. */
+  stripe: {
+    /** The customer paid: Stripe's webhook records the purchase. */
+    pay: (sessionId: string) => void;
+    /** The session expired unpaid. */
+    expire: (sessionId: string) => void;
+    /** The purchase exists already, for example from another device. */
+    grantPremium: () => void;
+    /** URLs Stripe would send the customer back to. */
+    successUrl: (sessionId: string, returnTo?: string) => string;
+    cancelUrl: (returnTo?: string) => string;
+  };
+}
+
+export interface MockCheckout {
+  id: string;
+  status: "open" | "paid" | "expired";
+  requestBody: unknown;
+  /** How many times the success page asked the server to confirm this session. */
+  confirmCalls: number;
 }
 
 const get = (r: Row, col: string) => (col.includes("->>") ? r[col.split("->>")[0]]?.[col.split("->>")[1]] : r[col]);
@@ -61,8 +86,43 @@ const matches = (r: Row, params: URLSearchParams) =>
   });
 
 /** Routes every request to the fake Supabase host into the in-memory database. */
-export async function installMockSupabase(context: BrowserContext): Promise<MockSupabase> {
-  const mock: MockSupabase = { db: new Map(), log: { removed: [], uploads: [] }, rsvps: [], failNext: { patch: false, list: false, rsvpSubmit: false } };
+export async function installMockSupabase(context: BrowserContext, options: { premium?: boolean } = {}): Promise<MockSupabase> {
+  const mock: MockSupabase = { db: new Map(), log: { removed: [], uploads: [] }, rsvps: [],
+    purchases: [],
+    checkouts: [],
+    failNext: { patch: false, list: false, rsvpSubmit: false, checkout: false },
+    stripe: {
+      pay: (id) => {
+        const c = mock.checkouts.find((x) => x.id === id);
+        if (c && c.status === "open") c.status = "paid";
+        if (c && !mock.purchases.some((p) => p.stripe_checkout_session_id === id)) mock.purchases.push({ id: crypto.randomUUID(), user_id: USER_ID, product: "premium", status: "paid", stripe_checkout_session_id: id });
+      },
+      expire: (id) => {
+        const c = mock.checkouts.find((x) => x.id === id);
+        if (c && c.status === "open") c.status = "expired";
+      },
+      grantPremium: () => {
+        mock.purchases.push({ id: crypto.randomUUID(), user_id: USER_ID, product: "premium", status: "paid", stripe_checkout_session_id: `cs_granted_${mock.purchases.length}` });
+      },
+      successUrl: (id, returnTo) => `/premium/success?session_id=${id}${returnTo ? `&return_to=${encodeURIComponent(returnTo)}` : ""}`,
+      cancelUrl: (returnTo) => `/premium/cancelled${returnTo ? `?return_to=${encodeURIComponent(returnTo)}` : ""}`,
+    },
+  };
+  const hasPremium = () => mock.purchases.some((p) => p.user_id === USER_ID && p.status === "paid");
+  /** The database rule from migration 20260101000400, applied to a row about to be written. */
+  const premiumRefused = (row: Row, old?: Row) => {
+    const template = getTemplate(row.template_id);
+    if (!template || hasPremium()) return false;
+    const look = row.design?.presetId as string | undefined;
+    const premiumLook = Boolean(look) && template.presets.find((p) => p.id === look)?.tier === "premium";
+    if (old) {
+      if (old.template_id === row.template_id) {
+        if (look === old.design?.presetId) return false;
+        return template.tier !== "premium" && premiumLook;
+      }
+    }
+    return template.tier === "premium" || premiumLook;
+  };
   const CORS = { "access-control-allow-origin": "*", "access-control-allow-headers": "*", "access-control-allow-methods": "*", "access-control-expose-headers": "*" };
 
   await context.route(`${SUPABASE_URL}/**`, async (route) => {
@@ -84,9 +144,34 @@ export async function installMockSupabase(context: BrowserContext): Promise<Mock
       return json(200, { Key: url.pathname });
     }
 
+    const authed = /\.sig$/.test(req.headers()["authorization"] ?? "");
+
+    if (url.pathname === "/functions/v1/create-checkout-session" && method === "POST") {
+      if (!authed) return json(401, { error: "Please sign in to continue." });
+      if (mock.failNext.checkout) return json(500, { error: "We couldn't start checkout. Please try again." });
+      if (hasPremium()) return json(200, { status: "owned" });
+      const open = mock.checkouts.find((c) => c.status === "open");
+      const reused = open ?? { id: `cs_test_${mock.checkouts.length + 1}`, status: "open" as const, requestBody: JSON.parse(req.postData() ?? "{}"), confirmCalls: 0 };
+      if (!open) mock.checkouts.push(reused);
+      return json(200, { status: "checkout", url: `https://checkout.stripe.test/c/pay/${reused.id}` });
+    }
+    if (url.pathname === "/functions/v1/confirm-checkout-session" && method === "POST") {
+      if (!authed) return json(401, { error: "Please sign in to continue." });
+      const { sessionId } = JSON.parse(req.postData() ?? "{}");
+      const c = mock.checkouts.find((x) => x.id === sessionId);
+      if (!c) return json(404, { error: "We couldn't find that checkout." });
+      c.confirmCalls++;
+      return json(200, { status: c.status === "paid" ? "paid" : c.status === "expired" ? "expired" : "pending" });
+    }
+    if (url.pathname.startsWith("/rest/v1/purchases")) {
+      // Row level security: a signed-in user reads only their own rows, and nobody writes from the browser.
+      if (method !== "GET") return json(403, { code: "42501", message: "permission denied for table purchases" });
+      const rows = authed ? mock.purchases.filter((p) => p.user_id === USER_ID && matches(p, url.searchParams)) : [];
+      return json(200, rows);
+    }
+
     if (url.pathname.startsWith("/rest/v1/rsvps")) {
       // Mirrors the row level security policies: replies are write-only for guests and readable by the owner.
-      const authed = /\.sig$/.test(req.headers()["authorization"] ?? "");
       if (method === "POST") {
         if (mock.failNext.rsvpSubmit) return json(500, { message: "boom" });
         const body = JSON.parse(req.postData() ?? "{}");
@@ -115,6 +200,7 @@ export async function installMockSupabase(context: BrowserContext): Promise<Mock
       }
       if (method === "POST") {
         const body = JSON.parse(req.postData() ?? "{}");
+        if (premiumRefused(body)) return json(402, { code: "PT402", message: "premium_required", details: null, hint: "This template or Look needs Premium access." });
         const row = { id: crypto.randomUUID(), slug: null, status: "draft", created_at: new Date().toISOString(), updated_at: new Date().toISOString(), ...body };
         mock.db.set(row.id, row);
         return json(201, row);
@@ -124,6 +210,7 @@ export async function installMockSupabase(context: BrowserContext): Promise<Mock
         const target = rows[0];
         if (!target) return json(404, {});
         const body = JSON.parse(req.postData() ?? "{}");
+        if (premiumRefused({ ...target, ...body }, target)) return json(402, { code: "PT402", message: "premium_required", details: null, hint: "This template or Look needs Premium access." });
         if (body.slug && [...mock.db.values()].some((r) => r.id !== target.id && r.slug === body.slug)) return json(409, { code: "23505", message: "duplicate key" });
         Object.assign(target, body, { updated_at: new Date().toISOString() });
         return (req.headers()["prefer"] ?? "").includes("return=representation") ? json(200, wantsObject ? target : [target]) : noContent();
@@ -135,6 +222,7 @@ export async function installMockSupabase(context: BrowserContext): Promise<Mock
     }
     return json(404, { message: `unmocked ${url.pathname}` });
   });
+  if (options.premium) mock.stripe.grantPremium();
   return mock;
 }
 

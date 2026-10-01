@@ -46,6 +46,7 @@ export const elegantWedding: TemplateMeta = {
     },
     {
       id: "midnight-foil",
+      tier: "premium",
       name: "Midnight Foil",
       design: {
         ...base,

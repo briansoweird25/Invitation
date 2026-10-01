@@ -1,0 +1,14 @@
+# Settings the Supabase CLI reads when deploying. Replace project_id with your project's reference.
+project_id = "invitation-generator"
+
+# Stripe calls this endpoint without a Supabase login, so the platform's JWT check is off. The function
+# instead requires a valid Stripe signature on every request.
+[functions.stripe-webhook]
+verify_jwt = false
+
+# These two are called by the signed-in app and verify the user's token themselves as well.
+[functions.create-checkout-session]
+verify_jwt = true
+
+[functions.confirm-checkout-session]
+verify_jwt = true
