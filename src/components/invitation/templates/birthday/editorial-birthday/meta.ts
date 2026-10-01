@@ -1,0 +1,75 @@
+import type { TemplateMeta } from "../../../templateTypes";
+
+export const editorialBirthday: TemplateMeta = {
+  id: "editorial-birthday",
+  name: "Editorial Birthday",
+  description: "A magazine-style card with an oversized name, hairline rules and a details grid.",
+  category: "birthday",
+  alsoSuits: ["graduation", "retirement", "corporate-event"],
+  styles: ["editorial", "modern"],
+  layout: "editorial-grid",
+  tier: "free",
+  status: "active",
+  addedAt: "2026-10-01",
+  capabilities: {
+    decorations: [
+      { id: "ring", label: "Ring" },
+      { id: "half-circle", label: "Half circle" },
+    ],
+    frames: ["corner-brackets", "thin-line"],
+    patterns: ["dots", "checks"],
+    backgrounds: ["paper-grain", "wash-dawn"],
+    backgroundImage: true,
+    palettes: "any",
+    fontPairings: ["magazine", "fashion-serif", "poster-serif", "clean-grotesk", "fat-display"],
+  },
+  presets: [
+    {
+      id: "cobalt",
+      name: "Cobalt",
+      design: {
+        headingFont: "Fraunces",
+        bodyFont: "Inter",
+        backgroundColor: "#F5F2EC",
+        textColor: "#10213F",
+        accentColor: "#E4452B",
+        decorations: ["ring"],
+      },
+    },
+    {
+      id: "ink-lime",
+      name: "Ink & Lime",
+      design: {
+        headingFont: "Bodoni Moda",
+        bodyFont: "DM Sans",
+        backgroundColor: "#121212",
+        textColor: "#F5F2EC",
+        accentColor: "#D7F25C",
+        frame: { id: "corner-brackets" },
+        decorations: ["half-circle"],
+      },
+    },
+    {
+      id: "blush-edit",
+      name: "Blush Edit",
+      design: {
+        headingFont: "Fraunces",
+        bodyFont: "Inter",
+        backgroundColor: "#F4E4DD",
+        textColor: "#2A1A18",
+        accentColor: "#C0392B",
+        background: { id: "paper-grain" },
+        decorations: ["ring"],
+      },
+    },
+  ],
+  sampleContent: {
+    eventTitle: "turns 40",
+    hostNames: "Sasha",
+    date: "2026-09-26",
+    time: "20:00",
+    venue: "Studio 9",
+    address: "9 Foundry Lane",
+    message: "Dinner, drinks and a long overdue reunion.",
+  },
+};

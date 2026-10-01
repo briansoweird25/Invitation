@@ -16,3 +16,8 @@ export function contrastRatio(a: string, b: string): number | null {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 }
+
+/** The candidate with the best contrast against `background`. Used for text drawn on an accent-colored shape. */
+export function pickReadable(background: string, ...candidates: string[]): string {
+  return candidates.reduce((best, c) => ((contrastRatio(c, background) ?? 0) > (contrastRatio(best, background) ?? 0) ? c : best), candidates[0]);
+}

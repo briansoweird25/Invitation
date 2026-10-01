@@ -56,3 +56,12 @@ export function splitHostNames(hostNames: string): string[] {
 export function joinText(parts: (string | undefined)[], separator = " · "): string {
   return parts.filter((p): p is string => Boolean(p)).join(separator);
 }
+
+/**
+ * Shrinks a font size (in cqw) for long text so it stays inside the card.
+ * Text up to `comfortableChars` keeps the base size; longer text scales down, but never below `min` of the base.
+ */
+export function fitSize(base: number, text: string, comfortableChars: number, min = 0.4): string {
+  const factor = text.length <= comfortableChars ? 1 : Math.max(min, comfortableChars / text.length);
+  return `${(base * factor).toFixed(2)}cqw`;
+}

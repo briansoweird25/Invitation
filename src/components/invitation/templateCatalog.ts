@@ -2,16 +2,29 @@ import { categoryConfigs } from "@/data/categories";
 import { categories, type InvitationCategory } from "@/data/taxonomy";
 import type { InvitationContent, InvitationDesign } from "@/types/invitation";
 import type { DesignPreset, TemplateMeta } from "./templateTypes";
+import { confettiBirthday } from "./templates/birthday/confetti-birthday/meta";
+import { editorialBirthday } from "./templates/birthday/editorial-birthday/meta";
 import { modernBirthday } from "./templates/birthday/modern-birthday/meta";
+import { vintageBirthday } from "./templates/birthday/vintage-birthday/meta";
 import { elegantWedding } from "./templates/wedding/elegant-wedding/meta";
 import { floralWedding } from "./templates/wedding/floral-wedding/meta";
+import { luxuryWedding } from "./templates/wedding/luxury-wedding/meta";
 import { minimalWedding } from "./templates/wedding/minimal-wedding/meta";
 
 /**
  * Catalog metadata for every template. It holds no components, so it stays small and always loaded.
  * To add a template, create its component and meta, then add the meta here.
  */
-const metas: TemplateMeta[] = [elegantWedding, floralWedding, minimalWedding, modernBirthday];
+const metas: TemplateMeta[] = [
+  elegantWedding,
+  floralWedding,
+  luxuryWedding,
+  minimalWedding,
+  modernBirthday,
+  confettiBirthday,
+  vintageBirthday,
+  editorialBirthday,
+];
 
 export type TemplateId = string;
 

@@ -10,8 +10,12 @@ type TemplateComponent = ComponentType<TemplateProps>;
 const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "elegant-wedding": () => import("./templates/wedding/elegant-wedding").then((m) => ({ default: m.ElegantWedding })),
   "floral-wedding": () => import("./templates/wedding/floral-wedding").then((m) => ({ default: m.FloralWedding })),
+  "luxury-wedding": () => import("./templates/wedding/luxury-wedding").then((m) => ({ default: m.LuxuryWedding })),
   "minimal-wedding": () => import("./templates/wedding/minimal-wedding").then((m) => ({ default: m.MinimalWedding })),
   "modern-birthday": () => import("./templates/birthday/modern-birthday").then((m) => ({ default: m.ModernBirthday })),
+  "confetti-birthday": () => import("./templates/birthday/confetti-birthday").then((m) => ({ default: m.ConfettiBirthday })),
+  "vintage-birthday": () => import("./templates/birthday/vintage-birthday").then((m) => ({ default: m.VintageBirthday })),
+  "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 
 const cache = new Map<string, LazyExoticComponent<TemplateComponent>>();

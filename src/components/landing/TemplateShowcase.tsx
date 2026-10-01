@@ -5,6 +5,9 @@ import { templateList } from "@/components/invitation/templateCatalog";
 import { TemplatePreview } from "@/components/templates/TemplatePreview";
 import { SectionHeading } from "./SectionHeading";
 
+/** The featured templates, up to four, so the landing page stays compact as the catalog grows. */
+const showcase = templateList.filter((t) => t.featured).slice(0, 4);
+
 export function TemplateShowcase() {
   return (
     <section id="templates" className="border-t bg-surface py-20 sm:py-28">
@@ -24,7 +27,7 @@ export function TemplateShowcase() {
         </div>
 
         <ul className="mt-12 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-8">
-          {templateList.map((t) => (
+          {showcase.map((t) => (
             <li key={t.id}>
               <Link to={`/templates/${t.category}`} className="group block">
                 <div className="rounded-lg bg-muted p-4 transition-colors group-hover:bg-border/70 sm:p-6">

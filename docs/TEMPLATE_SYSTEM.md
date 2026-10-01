@@ -73,7 +73,22 @@ scripts/checkTemplates.ts   validates the catalog and kit (npm run check:templat
 
 **Validation.** Stored rows are validated on load. An unknown `category` falls back to `general-party`. The design schema accepts the new optional keys.
 
-**Reference templates.** Elegant Wedding, Floral Wedding, Minimal Wedding and Modern Birthday use the kit. They prove the architecture and set the quality bar.
+**Templates.** Eight templates, each with three presets, built from the kit:
+
+| Template | Category | Styles | Layout | Tier |
+| --- | --- | --- | --- | --- |
+| Elegant Wedding | wedding | elegant, traditional | centered classic | free |
+| Floral Wedding | wedding | floral, romantic, botanical | asymmetric | premium |
+| Minimal Wedding | wedding | minimal, modern | editorial grid | free |
+| Luxury Wedding | wedding | luxury, elegant | framed card | premium |
+| Modern Birthday | birthday | modern, playful, colorful | typographic poster | free |
+| Confetti Birthday | birthday | playful, colorful | ticket label | free |
+| Vintage Birthday | birthday | vintage, traditional | badge and seal | premium |
+| Editorial Birthday | birthday | editorial, modern | editorial grid | free |
+
+The first four are the reference templates that proved the architecture. The last four are the first batch (T5). Each has a clearly different layout, type, decoration and mood.
+
+**Helpers for content robustness.** `fitSize(base, text, comfortableChars)` in `lib/invitationFormat.ts` shrinks a font size for long names so they stay inside the card. `pickReadable(background, ...candidates)` in `lib/color.ts` picks the most readable text color for text drawn on an accent-colored shape (a ribbon, a seal). The T5 templates also clamp optional lines and keep their content in a padded box that clips instead of running over the frame.
 
 **Database.** `invitations.template_id` and `category` are plain text with no foreign key and no enum. `content`, `design` and `rsvp_settings` are JSONB. See section 9.
 
@@ -367,6 +382,8 @@ A layout is a reusable arrangement of the content fields (centered classic, asym
 
 # 5. Content robustness
 
+Use `fitSize` for names and headlines, `pickReadable` for text on accent shapes, `line-clamp` on optional lines, and keep content inside a padded, clipped box so it never reaches the frame. Test every template with the stress cases below.
+
 Every template must stay presentable with:
 
 - very long and very short names, and names that wrap onto several lines
@@ -458,7 +475,8 @@ Template work runs as its own track alongside the numbered phases in `CLAUDE.md`
 | T2 | Kit v1: frames, botanicals, patterns, ornaments and dividers, shapes, backgrounds | **Done.** 47 pieces, used by the reference templates. |
 | T3 | Palette and font-pairing libraries, plus the editor pickers | **Done.** 13 palettes, 15 pairings, 22 fonts, Looks, thumbnail pickers. |
 | T4 | Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews | **Done.** Plus sort, URL state and the landing Occasions section. |
-| T5+ | Template batches, one category at a time | Aim for three to four templates per category. Suggested order: Wedding, Birthday, Baby Shower, Graduation, General Party, then the rest. |
+| T5 | First template batch: Wedding and Birthday to four templates each | **Done.** Luxury Wedding, Confetti Birthday, Vintage Birthday, Editorial Birthday. |
+| T6+ | Further batches, one category at a time | Aim for three to four templates per category. Suggested order: Baby Shower, Graduation, General Party, then the rest. |
 
 T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) will render the richer templates from day one.
 
