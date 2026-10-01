@@ -15,6 +15,7 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const DashboardSettings = lazy(() => import("@/pages/DashboardSettings"));
 const Editor = lazy(() => import("@/pages/Editor"));
 const PublicInvitation = lazy(() => import("@/pages/PublicInvitation"));
+const DevTemplateSheet = import.meta.env.DEV ? lazy(() => import("@/pages/DevTemplateSheet")) : null;
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const page = (element: ReactNode) => <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
@@ -57,6 +58,7 @@ const routes: RouteObject[] = [
           { path: "editor/:invitationId", element: page(<Editor />) },
         ],
       },
+      ...(DevTemplateSheet ? [{ path: "dev/templates", element: page(<DevTemplateSheet />) }] : []),
       { path: "editor", element: <Navigate to="/editor/new" replace /> },
     ],
   },

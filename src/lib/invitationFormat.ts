@@ -65,3 +65,38 @@ export function fitSize(base: number, text: string, comfortableChars: number, mi
   const factor = text.length <= comfortableChars ? 1 : Math.max(min, comfortableChars / text.length);
   return `${(base * factor).toFixed(2)}cqw`;
 }
+
+export type DateStyle = "long" | "long-us" | "short" | "numeric" | "day-month" | "month-day" | "full-us";
+
+/**
+ * Formats an ISO date for display. An unparseable date is returned unchanged so the user's text still shows.
+ *   long      Saturday, 14 June 2026        long-us   Saturday, June 14
+ *   full-us   June 14, 2026                 month-day June 14
+ *   day-month 14 June                       short     Sat 14 Jun
+ *   numeric   14.06.26
+ */
+export function formatDate(iso: string, style: DateStyle): string {
+  const d = dateParts(iso);
+  if (!d) return iso;
+  switch (style) {
+    case "long":
+      return `${d.weekday}, ${d.day} ${d.month} ${d.year}`;
+    case "long-us":
+      return `${d.weekday}, ${d.month} ${d.day}`;
+    case "full-us":
+      return `${d.month} ${d.day}, ${d.year}`;
+    case "month-day":
+      return `${d.month} ${d.day}`;
+    case "day-month":
+      return `${d.day} ${d.month}`;
+    case "short":
+      return `${d.weekdayShort} ${d.day} ${d.monthShort}`;
+    case "numeric":
+      return `${d.dd}.${d.mm}.${d.yy}`;
+  }
+}
+
+/** "17:00 · The Garden Room" style line: the time (when set) and the venue, skipping whichever is empty. */
+export function whenWhere(content: { time: string; venue: string }, separator = " · "): string {
+  return joinText([content.time && formatTime(content.time), content.venue], separator);
+}
