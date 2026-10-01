@@ -18,6 +18,8 @@ export const minimalWedding: TemplateMeta = {
     patterns: ["dots", "checks"],
     backgrounds: ["paper-grain", "linen"],
     backgroundImage: true,
+    palettes: "any",
+    fontPairings: ["clean-grotesk", "geometric", "magazine", "fashion-serif", "classic-serif"],
   },
   presets: [
     {

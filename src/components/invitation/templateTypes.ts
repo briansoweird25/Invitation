@@ -18,6 +18,10 @@ export interface TemplateCapabilities {
   backgrounds: string[];
   /** Whether the template shows an uploaded or linked background image. */
   backgroundImage: boolean;
+  /** Palette ids from `data/palettes.ts`, or "any". */
+  palettes: string[] | "any";
+  /** Font pairing ids from `data/fontPairings.ts`, or "any". */
+  fontPairings: string[] | "any";
 }
 
 /** A curated, complete design for a template. Presets vary mood, not structure. */

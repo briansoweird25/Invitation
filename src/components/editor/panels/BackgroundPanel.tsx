@@ -1,12 +1,11 @@
-import { getKitPiece } from "@/components/invitation/kit/registry";
 import { getTemplate } from "@/components/invitation/templateCatalog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { fieldError, imageUrlSchema } from "@/lib/validation";
 import { useInvitationStore } from "@/stores/invitationStore";
 import { ColorControl } from "../controls/ColorControl";
 import { ImageUpload } from "../controls/ImageUpload";
+import { PieceGrid } from "../controls/PieceGrid";
 import { Field } from "@/components/ui/field";
 import { PanelSection } from "../PanelSection";
 
@@ -20,20 +19,14 @@ export function BackgroundPanel() {
     <PanelSection id="background" title="Background">
       <ColorControl id="bg-color" label="Background color" value={design.backgroundColor} onChange={(backgroundColor) => update({ backgroundColor })} />
       {caps && caps.backgrounds.length > 0 && (
-        <Field id="bg-effect" label="Texture or wash" helper="Drawn over the background color.">
-          <Select
-            id="bg-effect"
-            value={design.background?.id ?? ""}
-            onChange={(e) => update({ background: e.target.value ? { ...design.background, id: e.target.value } : undefined })}
-          >
-            <option value="">None</option>
-            {caps.backgrounds.map((id) => (
-              <option key={id} value={id}>
-                {getKitPiece("background", id)?.label ?? id}
-              </option>
-            ))}
-          </Select>
-        </Field>
+        <PieceGrid
+          label="Texture or wash"
+          kind="background"
+          options={caps.backgrounds}
+          value={design.background?.id}
+          design={design}
+          onChange={(id) => update({ background: id ? { ...design.background, id } : undefined })}
+        />
       )}
       {caps?.backgroundImage !== false && (
         <>

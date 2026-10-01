@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type EditorPanel = "event" | "message" | "rsvp" | "typography" | "colors" | "background" | "decorations";
+export type EditorPanel = "looks" | "event" | "message" | "rsvp" | "typography" | "colors" | "background" | "decorations";
 export type MobileSheet = "details" | "design" | "rsvp";
 
 export const ZOOM_MIN = 0.75;
@@ -24,7 +24,7 @@ interface EditorState {
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
-  openPanels: ["event"],
+  openPanels: ["event", "looks"],
   mobileSheet: null,
   zoom: 1,
   isDirty: false,

@@ -4,7 +4,7 @@ This document is the architecture reference for invitation templates: how they a
 
 It has two parts:
 
-- **Current implementation** is what exists in the code today. Steps T1 (Template System v2) and T2 (Kit v1) are done.
+- **Current implementation** is what exists in the code today. Steps T1 (Template System v2), T2 (Kit v1), T3 (palettes, font pairings, pickers) and T4 (gallery upgrade) are done.
 - **Target architecture** is where the template system is going. Parts that are not built yet are marked *(planned)*.
 
 Read `CLAUDE.md` for the rules that apply to the whole product and `DESIGN.md` (Part B) for the visual language of the templates.
@@ -28,7 +28,11 @@ Read `CLAUDE.md` for the rules that apply to the whole product and `DESIGN.md` (
 src/data/
 ├── taxonomy.ts             13 categories, 13 style tags, 10 layouts, category fallback
 ├── categories.ts           per-category config: labels, helpers, sample content, suggestions
-└── palettes.ts             six palettes used by the Colors panel (library planned for T3)
+├── palettes.ts             13 curated palettes with style tags
+└── fontPairings.ts         15 curated heading, body and script pairings
+src/lib/
+├── fonts.ts                22 fonts, loaded on demand; ensureFontLoaded
+└── templateFilters.ts      gallery filters, sorting and URL parsing
 src/components/invitation/
 ├── InvitationRenderer.tsx  canvas, background, wash, pattern, frame, then the template
 ├── templateTypes.ts        TemplateMeta, DesignPreset, TemplateCapabilities
@@ -53,7 +57,17 @@ scripts/checkTemplates.ts   validates the catalog and kit (npm run check:templat
 
 **Presets.** Each template has three presets. A preset is `{ id, name, design }` where `design` is a complete, resolved `InvitationDesign`. The first preset is the default. `/editor/new?template=<id>&preset=<id>` starts from a preset, and an unknown preset falls back to the default. The starting design records `presetId` as an editor hint.
 
-**Capabilities.** The editor builds its panels from `capabilities`: template decorations (toggles), allowed frames, patterns and background washes (kit ids), and whether the template accepts a background image. The Decorations panel is hidden when a template offers nothing. Selects for frame, pattern and wash are simple for now; thumbnail pickers come in T3.
+**Capabilities.** The editor builds its panels from `capabilities`: template decorations (toggles), allowed frames, patterns and background washes (kit ids), allowed palettes and font pairings (ids or `"any"`), and whether the template accepts a background image. The Decorations panel is hidden when a template offers nothing.
+
+**Editor pickers (T3).** Design controls show the result instead of names:
+
+- **Looks:** the template's presets as thumbnails of the invitation itself, drawn with the current content. Choosing one replaces the design (fonts, colors, frame, pattern, wash, decorations) and keeps the user's background image. The `presetId` hint marks the active look.
+- **Colors:** curated palettes as small colored cards, with palettes that match the template's styles first. Custom colors (text, accent, second accent) sit behind a "Custom colors" toggle. Picking a palette sets `paletteId`; editing a color by hand clears it.
+- **Typography:** font pairings as cards that render the real fonts in the invitation's colors. "Choose fonts yourself" opens grouped selects for heading, body and an optional script font. A pairing sets `fontPairingId`; editing a font by hand clears it.
+- **Frame, pattern and texture or wash:** tiles drawn with the invitation's own colors.
+- A palette or pairing is highlighted when its values match the design.
+
+**Fonts.** `lib/fonts.ts` lists 22 open-licensed fonts. Inter and Cormorant Garamond are bundled because the application UI uses them. All others load on demand through `ensureFontLoaded`, which `InvitationRenderer` calls for the fonts a design uses, so a font is only downloaded when it first appears. The renderer sets `font-synthesis: none`, so a font that lacks a weight or style shows its regular face instead of a faked one. A pairing's `script` font is used for names in templates that support it (Floral Wedding) and for the "and" in Elegant Wedding.
 
 **Categories.** Event details labels and helper text come from `data/categories.ts`, so there are no hardcoded `category === "birthday"` checks. A template's sample content is the category sample plus the template's own overrides. The gallery lists only categories that have templates.
 
@@ -63,7 +77,18 @@ scripts/checkTemplates.ts   validates the catalog and kit (npm run check:templat
 
 **Database.** `invitations.template_id` and `category` are plain text with no foreign key and no enum. `content`, `design` and `rsvp_settings` are JSONB. See section 9.
 
-**Still to do:** palette and font-pairing libraries and thumbnail pickers (T3), gallery filters by style and variations in the preview dialog (T4), more templates (T5+), illustrations in the kit, and lazy loading of kit pieces if the kit grows large.
+**Gallery (T4).** `/templates` and `/templates/:category` support:
+
+- Category tabs for categories that have templates, with counts. The bar scrolls horizontally on small screens.
+- Style chips for styles that at least one template (after the category and price filters) has, with counts. Selecting several shows templates that have **any** of them.
+- A price filter and a sort (Featured, New, A to Z). Ties keep catalog order.
+- URL state: `?style=floral,vintage&access=free&sort=new`. Defaults are left out of the URL, and the category tabs keep the other filters.
+- Cards sit on a backdrop tinted with the template's own background color, show the category and up to two style tags, and reveal with a short staggered fade.
+- Card previews render only when they are within about 400px of the viewport (`LazyMount`), with a same-sized placeholder so nothing shifts.
+- The preview dialog shows a template's presets as variation swatches. Choosing one switches the large preview and starts the editor with it: `/editor/new?template=<id>&preset=<id>`.
+- The landing page has an "Occasions" section: a card with a real preview for each category that has templates, and a list of the categories that are on the way.
+
+**Still to do:** more templates (T5+), kit illustrations, layout primitives, collections in the gallery, search, and lazy loading of kit pieces if the kit grows large.
 
 ---
 
@@ -178,7 +203,9 @@ interface TemplateCapabilities {
   patterns: string[];                 // kit pattern ids
   backgrounds: string[];              // kit background ids (washes and textures)
   backgroundImage: boolean;           // accepts an uploaded or linked image
-  // Planned for T3: fontPairings, palettes, contentFields
+  palettes: string[] | "any";
+  fontPairings: string[] | "any";
+  // Planned: contentFields
 }
 ```
 
@@ -196,7 +223,7 @@ interface DesignPreset {
 }
 ```
 
-Presets store resolved values, which is what an invitation stores. When the palette and font-pairing libraries arrive (T3), presets will also record `paletteId` and `fontPairingId` as hints inside `design`.
+Presets store resolved values, which is what an invitation stores. Starting from a preset records `presetId` as a hint. The editor records `paletteId` and `fontPairingId` when someone picks a palette or pairing, and clears them when colors or fonts are edited by hand.
 
 - The gallery shows each template with its default preset. The preview dialog offers the other presets as swatches.
 - Choosing a preset starts the editor with that design: `/editor/new?template=<id>&preset=<presetId>`. A missing or unknown preset means the default one.
@@ -324,8 +351,8 @@ A layout is a reusable arrangement of the content fields (centered classic, asym
 - `templateCatalog.ts` holds only `TemplateMeta`. It is small and always available.
 - Template components load on demand through `templateLoader.ts`, one chunk per template.
 - `InvitationRenderer` shows the card background while the component loads, then the template.
-- The gallery should render previews only for cards that are on or near the screen *(planned, T4)*.
-- Fonts load per pairing in use, not all at once.
+- The gallery renders previews only for cards that are on or near the screen.
+- Fonts load on demand, only when a design that uses them is drawn.
 
 ---
 
@@ -413,7 +440,7 @@ Done in T1: `src/lib/invitationApi.ts` maps any stored `category` through the ta
 6. Declare capabilities honestly. Only list what the template really supports.
 7. Add sample content only when the category sample does not fit.
 8. Add the meta to `templateCatalog.ts` and the lazy import to `templateLoader.ts`.
-9. Run `npm run check:templates`. It checks ids, categories, style tags, layouts, loader registration, preset capabilities, kit ids and contrast.
+9. Run `npm run check:templates`. It checks ids, categories, style tags, layouts, loader registration, preset capabilities, kit ids, palette and pairing ids, fonts and contrast.
 10. Run the quality checklist in `DESIGN.md` B13, including the stress cases in section 5 above.
 11. Check the gallery card, the preview dialog, the editor at desktop and mobile widths, and the dashboard thumbnail.
 
@@ -429,8 +456,8 @@ Template work runs as its own track alongside the numbered phases in `CLAUDE.md`
 | --- | --- | --- |
 | T1 | Taxonomy, category config, catalog/loader split, presets, migrate the four reference templates | **Done.** |
 | T2 | Kit v1: frames, botanicals, patterns, ornaments and dividers, shapes, backgrounds | **Done.** 47 pieces, used by the reference templates. |
-| T3 | Palette and font-pairing libraries, plus the editor pickers | Thumbnail-based pickers. Capability-driven panels. |
-| T4 | Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews | Landing page category section. |
+| T3 | Palette and font-pairing libraries, plus the editor pickers | **Done.** 13 palettes, 15 pairings, 22 fonts, Looks, thumbnail pickers. |
+| T4 | Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews | **Done.** Plus sort, URL state and the landing Occasions section. |
 | T5+ | Template batches, one category at a time | Aim for three to four templates per category. Suggested order: Wedding, Birthday, Baby Shower, Graduation, General Party, then the rest. |
 
 T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) will render the richer templates from day one.

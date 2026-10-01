@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-
-export type Access = "all" | "free" | "premium";
+import type { Access } from "@/lib/templateFilters";
 
 const options: { value: Access; label: string }[] = [
   { value: "all", label: "All" },

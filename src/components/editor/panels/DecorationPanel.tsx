@@ -1,10 +1,8 @@
-import { getKitPiece } from "@/components/invitation/kit/registry";
 import { getTemplate } from "@/components/invitation/templateCatalog";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Field } from "@/components/ui/field";
 import { useInvitationStore } from "@/stores/invitationStore";
+import { PieceGrid } from "../controls/PieceGrid";
 import { PanelSection } from "../PanelSection";
 
 export function DecorationPanel() {
@@ -21,38 +19,23 @@ export function DecorationPanel() {
     update({ decorations: on ? [...active, id] : active.filter((d) => d !== id) });
 
   // Choosing a frame also drops the legacy "border" decoration, so "None" really means none.
-  const setFrame = (id: string) =>
+  const setFrame = (id: string | undefined) =>
     update({ frame: id ? { id } : undefined, decorations: active.filter((d) => d !== "border") });
 
   return (
     <PanelSection id="decorations" title="Decorations">
       {caps.frames.length > 0 && (
-        <Field id="deco-frame" label="Frame">
-          <Select id="deco-frame" value={design.frame?.id ?? ""} onChange={(e) => setFrame(e.target.value)}>
-            <option value="">None</option>
-            {caps.frames.map((id) => (
-              <option key={id} value={id}>
-                {getKitPiece("frame", id)?.label ?? id}
-              </option>
-            ))}
-          </Select>
-        </Field>
+        <PieceGrid label="Frame" kind="frame" options={caps.frames} value={design.frame?.id} design={design} onChange={setFrame} />
       )}
       {caps.patterns.length > 0 && (
-        <Field id="deco-pattern" label="Pattern">
-          <Select
-            id="deco-pattern"
-            value={design.pattern?.id ?? ""}
-            onChange={(e) => update({ pattern: e.target.value ? { ...design.pattern, id: e.target.value } : undefined })}
-          >
-            <option value="">None</option>
-            {caps.patterns.map((id) => (
-              <option key={id} value={id}>
-                {getKitPiece("pattern", id)?.label ?? id}
-              </option>
-            ))}
-          </Select>
-        </Field>
+        <PieceGrid
+          label="Pattern"
+          kind="pattern"
+          options={caps.patterns}
+          value={design.pattern?.id}
+          design={design}
+          onChange={(id) => update({ pattern: id ? { ...design.pattern, id } : undefined })}
+        />
       )}
       {caps.decorations.map((o) => (
         <div key={o.id} className="flex items-center justify-between gap-4">

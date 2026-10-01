@@ -822,7 +822,7 @@ Rules:
 - Limit a template to two families plus at most one script.
 - Large display type tolerates personality. Small text does not.
 - Check that the heading font has the weights the template uses. A synthesized bold looks wrong.
-- Fonts load per pairing in use, not all at once.
+- Fonts load on demand, only when a design that uses them is drawn. The renderer never fakes bold or italic.
 
 ---
 

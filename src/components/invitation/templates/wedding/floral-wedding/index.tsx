@@ -8,6 +8,7 @@ export function FloralWedding({ content, design }: TemplateProps) {
   const d = dateParts(content.date);
   const dateText = d ? `${d.month} ${d.day}, ${d.year}` : content.date;
   const heading = { fontFamily: resolveFont(design.headingFont) };
+  const names = design.scriptFont ? { fontFamily: resolveFont(design.scriptFont), fontStyle: "normal" as const } : heading;
   const has = (id: string) => design.decorations?.includes(id) ?? false;
 
   return (
@@ -26,7 +27,7 @@ export function FloralWedding({ content, design }: TemplateProps) {
             {content.eventTitle}
           </p>
         )}
-        <h3 className="mt-[5cqw] text-[14cqw] font-normal italic leading-[0.95]" style={heading}>
+        <h3 className="mt-[5cqw] text-[14cqw] font-normal italic leading-[0.95]" style={names}>
           {first}
           {second && <span className="block pl-[10cqw]">&amp; {second}</span>}
         </h3>

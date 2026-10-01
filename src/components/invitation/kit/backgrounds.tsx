@@ -102,11 +102,11 @@ function Linen({ color, opacity = 1, className }: KitPieceProps) {
   return (
     <Layer className={className}>
       <defs>
-        <pattern id={id} width="1.6" height="1.6" patternUnits="userSpaceOnUse">
-          <path d="M0 0.4H1.6M0.4 0V1.6" stroke={color} strokeWidth="0.12" />
+        <pattern id={id} width="1.1" height="1.1" patternUnits="userSpaceOnUse">
+          <path d="M0 0.3H1.1M0.3 0V1.1" stroke={color} strokeWidth="0.08" />
         </pattern>
       </defs>
-      <rect width="100" height="125" fill={`url(#${id})`} opacity={0.35 * opacity} />
+      <rect width="100" height="125" fill={`url(#${id})`} opacity={0.2 * opacity} />
     </Layer>
   );
 }

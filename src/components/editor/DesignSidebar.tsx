@@ -1,3 +1,4 @@
+import { LooksPanel } from "./panels/LooksPanel";
 import { BackgroundPanel } from "./panels/BackgroundPanel";
 import { ColorsPanel } from "./panels/ColorsPanel";
 import { DecorationPanel } from "./panels/DecorationPanel";
@@ -6,6 +7,7 @@ import { TypographyPanel } from "./panels/TypographyPanel";
 export function DesignPanels() {
   return (
     <>
+      <LooksPanel />
       <TypographyPanel />
       <ColorsPanel />
       <BackgroundPanel />

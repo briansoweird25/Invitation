@@ -27,6 +27,8 @@ interface InvitationState {
   setTitle: (title: string) => void;
   updateContent: (patch: Partial<InvitationContent>) => void;
   updateDesign: (patch: Partial<InvitationDesign>) => void;
+  /** Replaces the whole design, for applying a preset. */
+  setDesign: (design: InvitationDesign) => void;
   updateRsvp: (patch: Partial<RSVPSettings>) => void;
 }
 
@@ -63,6 +65,10 @@ export const useInvitationStore = create<InvitationState>((set) => ({
   },
   updateDesign: (patch) => {
     set((s) => ({ design: { ...s.design, ...patch } }));
+    markDirty();
+  },
+  setDesign: (design) => {
+    set({ design });
     markDirty();
   },
   updateRsvp: (patch) => {

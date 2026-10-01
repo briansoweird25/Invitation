@@ -22,6 +22,8 @@ export const elegantWedding: TemplateMeta = {
     patterns: [],
     backgrounds: ["paper-grain", "linen", "wash-soft", "vignette"],
     backgroundImage: true,
+    palettes: "any",
+    fontPairings: ["classic-serif", "romantic-script", "garden", "luxe-caps", "deco-display", "engraved", "fashion-serif"],
   },
   presets: [
     {

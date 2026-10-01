@@ -31,7 +31,7 @@ export function ElegantWedding({ content, design }: TemplateProps) {
           {first}
           {second && (
             <>
-              <span className="block text-[6cqw] font-normal italic" style={{ color: design.accentColor }}>
+              <span className="block text-[6cqw] font-normal italic" style={{ color: design.accentColor, fontFamily: design.scriptFont ? resolveFont(design.scriptFont) : undefined }}>
                 and
               </span>
               {second}

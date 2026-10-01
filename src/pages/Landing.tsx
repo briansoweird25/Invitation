@@ -1,3 +1,4 @@
+import { CategoryShowcase } from "@/components/landing/CategoryShowcase";
 import { FinalCta } from "@/components/landing/FinalCta";
 import { Features } from "@/components/landing/Features";
 import { Hero } from "@/components/landing/Hero";
@@ -9,6 +10,7 @@ export default function Landing() {
     <>
       <Hero />
       <TemplateShowcase />
+      <CategoryShowcase />
       <HowItWorks />
       <Features />
       <FinalCta />

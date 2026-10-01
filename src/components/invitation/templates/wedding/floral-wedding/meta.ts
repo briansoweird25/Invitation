@@ -23,6 +23,8 @@ export const floralWedding: TemplateMeta = {
     patterns: ["leaves"],
     backgrounds: ["watercolor", "wash-soft", "paper-grain"],
     backgroundImage: true,
+    palettes: "any",
+    fontPairings: ["garden", "romantic-script", "classic-serif", "engraved", "rustic-hand"],
   },
   presets: [
     {

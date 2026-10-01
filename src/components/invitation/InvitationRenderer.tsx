@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { resolveFont } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import type { InvitationContent, InvitationDesign } from "@/types/invitation";
+import { useInvitationFonts } from "@/hooks/useInvitationFonts";
 import { Kit } from "./kit/Kit";
 import { getTemplate } from "./templateCatalog";
 import { getTemplateComponent } from "./templateLoader";
@@ -33,6 +34,7 @@ interface InvitationRendererProps {
  * (decorations, content and ornaments). Template components load on demand.
  */
 export function InvitationRenderer({ templateId, content, design: rawDesign, className }: InvitationRendererProps) {
+  useInvitationFonts(rawDesign);
   const template = getTemplate(templateId);
   const Template = template ? getTemplateComponent(template.id) : undefined;
 
@@ -57,6 +59,8 @@ export function InvitationRenderer({ templateId, content, design: rawDesign, cla
           backgroundPosition: "center",
           color: design.textColor,
           fontFamily: resolveFont(design.bodyFont),
+          // Never fake bold or italic: a font without that style simply shows its regular face.
+          fontSynthesis: "none",
         }}
       >
         <Kit kind="background" id={design.background?.id} design={design} color={design.background?.color} opacity={design.background?.opacity} />

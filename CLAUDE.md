@@ -304,7 +304,7 @@ Implemented (Template System v2, steps T1 and T2; details in `docs/TEMPLATE_SYST
 - **The kit** (`components/invitation/kit/`): 47 shared SVG pieces (frames, botanicals, patterns, ornaments, shapes, backgrounds) that recolor from the design.
 - **Validation**: `npm run check:templates` checks the catalog and kit against these rules.
 
-Planned: illustrations in the kit, palette and font-pairing libraries, layout primitives, thumbnail pickers.
+Planned: illustrations in the kit, layout primitives, gallery collections and search.
 
 Rules:
 
@@ -365,8 +365,8 @@ Do not build many templates before the architecture is ready. Order of work:
 
 1. Template System v2: taxonomy, category config, catalog/loader split, presets, migrating the four reference templates. **Done (T1).**
 2. Kit v1: shared frames, botanicals, patterns, ornaments, shapes and backgrounds. **Done (T2).**
-3. Palette and font-pairing libraries, plus capability-driven editor pickers.
-4. Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews.
+3. Palette and font-pairing libraries, plus capability-driven editor pickers. **Done (T3).**
+4. Gallery upgrade: category tabs, style filters, sort, variations in the preview, lazy previews. **Done (T4).**
 5. Template batches, one category at a time (about three to four per category), each tested in the gallery, editor and dashboard before the next.
 
 Quality is more important than quantity. Variety is important too: layouts, decoration, backgrounds and mood should differ across the catalog.
@@ -432,15 +432,15 @@ Use collapsible sections where appropriate.
 
 Do not overwhelm users.
 
-Target behavior as the template system grows:
+Implemented behavior (details in `docs/TEMPLATE_SYSTEM.md` section 2):
 
 - Panels are **capability-driven**. They offer what the selected template supports and hide the rest.
 - Labels, helper text and starter copy come from the category configuration.
-- Typography shows curated font pairings as cards with a live sample.
+- A "Looks" panel applies the template's presets, shown as thumbnails of the invitation.
+- Typography shows curated font pairings as cards with a live sample, with individual fonts as an advanced option.
 - Colors show curated palettes first, with custom colors as an advanced option.
-- Background, Decorations, frames and patterns use thumbnails of the actual result.
-- A "Looks" strip applies a template's presets.
-- Applying a preset or palette writes ordinary values into `design`. The invitation data stays the single source of truth.
+- Frames, patterns and washes use thumbnails drawn with the invitation's colors.
+- Applying a look, palette or pairing writes ordinary values into `design`. The invitation data stays the single source of truth.
 
 ---
 
@@ -1007,11 +1007,11 @@ Template work runs alongside the numbered phases. See `docs/TEMPLATE_SYSTEM.md` 
 
 T1: Template System v2 (taxonomy, category config, catalog/loader split, presets). Done.
 T2: Kit v1 (frames, botanicals, patterns, ornaments, shapes, backgrounds). Done.
-T3: Palette and font-pairing libraries, capability-driven editor pickers.
-T4: Gallery upgrade (13 categories, style filters, variations, lazy previews).
+T3: Palette and font-pairing libraries, capability-driven editor pickers. Done.
+T4: Gallery upgrade (style filters, sort, variations, lazy previews, landing occasions). Done.
 T5+: Template batches, one category at a time.
 
-T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) render the richer templates from the start.
+T1 to T4 are in place, so Phase 9 (public invitations) and Phase 11 (export) render the richer templates from the start.
 
 ---
 

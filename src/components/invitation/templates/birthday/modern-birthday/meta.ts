@@ -22,6 +22,8 @@ export const modernBirthday: TemplateMeta = {
     patterns: ["confetti", "dots", "stars"],
     backgrounds: ["wash-dawn", "paper-grain"],
     backgroundImage: true,
+    palettes: "any",
+    fontPairings: ["clean-grotesk", "friendly-round", "brush-party", "poster-serif", "fat-display", "geometric"],
   },
   presets: [
     {

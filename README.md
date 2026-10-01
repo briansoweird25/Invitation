@@ -100,7 +100,8 @@ Four reference templates exist today (Elegant, Floral and Minimal Wedding, and M
 - 13 style tags: Elegant, Romantic, Floral, Modern, Minimal, Luxury, Vintage, Rustic, Botanical, Playful, Colorful, Traditional, Editorial
 - Variations (presets) of each template
 - A shared decoration kit: frames, botanicals, patterns, ornaments, shapes and illustrations
-- Curated color palettes and typography pairings
+- 13 curated color palettes and 15 typography pairings, with thumbnail pickers in the editor
+- A gallery with style filters, sorting, variations and lazy previews
 
 See `docs/TEMPLATE_SYSTEM.md` and `DESIGN.md` (Part B).
 
