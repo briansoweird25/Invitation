@@ -38,7 +38,7 @@ export function EditorHeader() {
         <p className={cn("text-xs sm:text-sm", saveError ? "text-destructive" : "text-muted-foreground")} role="status">
           {saveError ? "Couldn't save · retrying" : isSaving ? "Saving…" : isDirty ? "Unsaved changes" : isSaved ? "✓ Saved" : "Draft"}
         </p>
-        <Button size="sm" disabled title="Publishing is coming soon.">
+        <Button size="sm" disabled title="Publish from your dashboard.">
           Publish
         </Button>
       </div>

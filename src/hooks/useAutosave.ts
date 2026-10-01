@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { createInvitation, SAVE_ERROR_MESSAGE, updateInvitation } from "@/lib/invitationApi";
+import { createInvitation, releaseImage, SAVE_ERROR_MESSAGE, updateInvitation } from "@/lib/invitationApi";
 import type { InvitationDraft } from "@/lib/invitation";
 import { useAuthStore } from "@/stores/authStore";
 import { useEditorStore } from "@/stores/editorStore";
@@ -32,6 +32,9 @@ export function useAutosave() {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let saving = false;
     let disposed = false;
+    // The background image stored in the database, so a replaced or removed upload can be cleaned up.
+    const initial = useInvitationStore.getState();
+    let savedImage = initial.id ? initial.design.backgroundImage : undefined;
 
     const schedule = (delay = AUTOSAVE_DELAY_MS) => {
       clearTimeout(timer);
@@ -56,6 +59,9 @@ export function useAutosave() {
         else createdId = (await createInvitation(user.id, saved)).id;
 
         useEditorStore.getState().setSaveError(false);
+        const newImage = saved.design.backgroundImage;
+        if (savedImage && savedImage !== newImage) void releaseImage(user.id, savedImage, createdId ?? existingId ?? undefined);
+        savedImage = newImage;
         if (createdId) useInvitationStore.getState().setId(createdId);
         // Only mark clean if nothing changed while saving; otherwise save again.
         if (sameAs(saved, snapshot())) useEditorStore.getState().setDirty(false);

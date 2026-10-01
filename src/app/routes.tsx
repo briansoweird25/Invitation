@@ -12,7 +12,6 @@ const Pricing = lazy(() => import("@/pages/Pricing"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const DashboardInvitations = lazy(() => import("@/pages/DashboardInvitations"));
 const DashboardSettings = lazy(() => import("@/pages/DashboardSettings"));
 const Editor = lazy(() => import("@/pages/Editor"));
 const PublicInvitation = lazy(() => import("@/pages/PublicInvitation"));
@@ -42,7 +41,7 @@ const routes: RouteObject[] = [
             element: <ProtectedRoute />,
             children: [
               { path: "dashboard", element: page(<Dashboard />) },
-              { path: "dashboard/invitations", element: page(<DashboardInvitations />) },
+              { path: "dashboard/invitations", element: <Navigate to="/dashboard" replace /> },
               { path: "dashboard/settings", element: page(<DashboardSettings />) },
             ],
           },

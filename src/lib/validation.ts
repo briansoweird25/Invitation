@@ -77,3 +77,10 @@ export const rsvpSettingsSchema = z.object({
 });
 
 export const uuidSchema = z.uuid();
+
+/** Matches the check constraint on invitations.slug. */
+export const slugSchema = z
+  .string()
+  .min(3)
+  .max(60)
+  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/);

@@ -54,3 +54,28 @@ export async function uploadInvitationImage(userId: string, file: File): Promise
   }
   return supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
 }
+
+/**
+ * Extracts the storage path from a public URL of our bucket, but only for files inside the
+ * given user's own folder. Anything else (other buckets, other users, external links) returns null.
+ */
+export function ownedStoragePath(url: string | undefined, userId: string): string | null {
+  if (!url) return null;
+  try {
+    const marker = `/storage/v1/object/public/${IMAGE_BUCKET}/`;
+    const { pathname } = new URL(url);
+    const index = pathname.indexOf(marker);
+    if (index === -1) return null;
+    const path = decodeURIComponent(pathname.slice(index + marker.length));
+    return path.startsWith(`${userId}/`) && !path.includes("..") ? path : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Deletes a stored file. Best effort: a failure only leaves an unused file behind. */
+export async function removeStoredFile(path: string): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase.storage.from(IMAGE_BUCKET).remove([path]);
+  if (error && import.meta.env.DEV) console.error("[storage]", error);
+}

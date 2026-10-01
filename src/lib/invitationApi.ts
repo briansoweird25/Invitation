@@ -1,12 +1,19 @@
 import { z } from "zod";
 import type { Invitation } from "@/types/invitation";
 import type { InvitationDraft } from "./invitation";
+import { slugify, withSuffix } from "./slug";
+import { ownedStoragePath, removeStoredFile } from "./storage";
 import { supabase } from "./supabase";
-import { invitationContentSchema, invitationDesignSchema, rsvpSettingsSchema, uuidSchema } from "./validation";
+import { invitationContentSchema, invitationDesignSchema, rsvpSettingsSchema, slugSchema, uuidSchema } from "./validation";
 
 /** All database access for invitations lives here. Components and stores never call Supabase directly. */
 
 export const SAVE_ERROR_MESSAGE = "We couldn't save your invitation. Please try again.";
+export const LIST_ERROR_MESSAGE = "We couldn't load your invitations. Please try again.";
+export const DELETE_ERROR_MESSAGE = "We couldn't delete your invitation. Please try again.";
+export const PUBLISH_ERROR_MESSAGE = "We couldn't publish your invitation. Please try again.";
+export const UNPUBLISH_ERROR_MESSAGE = "We couldn't unpublish your invitation. Please try again.";
+export const PUBLISH_NEEDS_NAMES_MESSAGE = "Add the host names in the editor before publishing.";
 export const LOAD_ERROR_MESSAGE = "We couldn't open your invitation. Please try again.";
 
 const rowSchema = z.object({
@@ -94,4 +101,82 @@ export async function getOwnInvitation(id: string, userId: string): Promise<Invi
   } catch (e) {
     return fail(e, LOAD_ERROR_MESSAGE);
   }
+}
+
+/** Newest first. A row that no longer matches the expected shape is skipped rather than breaking the list. */
+export async function listOwnInvitations(userId: string): Promise<Invitation[]> {
+  const { data, error } = await client().from("invitations").select().eq("user_id", userId).order("updated_at", { ascending: false });
+  if (error) fail(error, LIST_ERROR_MESSAGE);
+  return (data ?? []).flatMap((row) => {
+    try {
+      return [toInvitation(row)];
+    } catch (e) {
+      if (import.meta.env.DEV) console.error("[invitations] skipped malformed row", e);
+      return [];
+    }
+  });
+}
+
+/**
+ * Deletes an uploaded image once nothing else the user owns points at it.
+ * Best effort: failures are logged and never block the caller.
+ */
+export async function releaseImage(userId: string, url: string | undefined, exceptInvitationId?: string): Promise<void> {
+  const path = ownedStoragePath(url, userId);
+  if (!path || !url) return;
+  try {
+    let query = client().from("invitations").select("id").eq("user_id", userId).eq("design->>backgroundImage", url).limit(1);
+    if (exceptInvitationId) query = query.neq("id", exceptInvitationId);
+    const { data, error } = await query;
+    if (error) throw error;
+    if (data.length === 0) await removeStoredFile(path);
+  } catch (e) {
+    if (import.meta.env.DEV) console.error("[invitations] image cleanup skipped", e);
+  }
+}
+
+export async function deleteInvitation(userId: string, invitation: Invitation): Promise<void> {
+  const { error } = await client().from("invitations").delete().eq("id", invitation.id).eq("user_id", userId);
+  if (error) fail(error, DELETE_ERROR_MESSAGE);
+  await releaseImage(userId, invitation.design.backgroundImage);
+}
+
+const UNIQUE_VIOLATION = "23505";
+const MAX_SLUG_ATTEMPTS = 5;
+
+/**
+ * Publishes an invitation. The first publish picks a readable slug from the host names
+ * and adds a short suffix if it is taken. The slug is kept when unpublishing, so the link stays stable.
+ */
+export async function publishInvitation(invitation: Invitation): Promise<Invitation> {
+  if (!invitation.content.hostNames.trim()) throw new Error(PUBLISH_NEEDS_NAMES_MESSAGE);
+
+  const existing = slugSchema.safeParse(invitation.slug).success ? invitation.slug : null;
+  const base = slugify(invitation.content.hostNames, slugify(invitation.title));
+
+  for (let attempt = 0; attempt < (existing ? 1 : MAX_SLUG_ATTEMPTS); attempt++) {
+    const slug = existing ?? (attempt === 0 ? base : withSuffix(base));
+    const { data, error } = await client()
+      .from("invitations")
+      .update({ status: "published", slug })
+      .eq("id", invitation.id)
+      .eq("user_id", invitation.userId)
+      .select()
+      .single();
+    if (!error) return toInvitation(data);
+    if (error.code !== UNIQUE_VIOLATION || existing) fail(error, PUBLISH_ERROR_MESSAGE);
+  }
+  return fail(new Error("Could not find a free slug"), PUBLISH_ERROR_MESSAGE);
+}
+
+export async function unpublishInvitation(invitation: Invitation): Promise<Invitation> {
+  const { data, error } = await client()
+    .from("invitations")
+    .update({ status: "draft" })
+    .eq("id", invitation.id)
+    .eq("user_id", invitation.userId)
+    .select()
+    .single();
+  if (error) fail(error, UNPUBLISH_ERROR_MESSAGE);
+  return toInvitation(data);
 }
