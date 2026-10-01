@@ -1,7 +1,7 @@
 import { Select } from "@/components/ui/select";
 import { fontOptions } from "@/lib/fonts";
 import { useInvitationStore } from "@/stores/invitationStore";
-import { Field } from "../controls/Field";
+import { Field } from "@/components/ui/field";
 import { PanelSection } from "../PanelSection";
 
 export function TypographyPanel() {

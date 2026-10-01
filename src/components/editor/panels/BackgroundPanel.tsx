@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { fieldError, imageUrlSchema } from "@/lib/validation";
 import { useInvitationStore } from "@/stores/invitationStore";
 import { ColorControl } from "../controls/ColorControl";
-import { Field } from "../controls/Field";
+import { Field } from "@/components/ui/field";
 import { PanelSection } from "../PanelSection";
 
 export function BackgroundPanel() {

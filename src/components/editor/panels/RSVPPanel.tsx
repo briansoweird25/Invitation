@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { emailSchema, fieldError, MAX_GUESTS_LIMIT } from "@/lib/validation";
 import { useInvitationStore } from "@/stores/invitationStore";
-import { Field } from "../controls/Field";
+import { Field } from "@/components/ui/field";
 import { PanelSection } from "../PanelSection";
 
 export function RSVPPanel() {

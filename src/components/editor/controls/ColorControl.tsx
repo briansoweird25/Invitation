@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { isHexColor } from "@/lib/color";
-import { Field } from "./Field";
+import { Field } from "@/components/ui/field";
 
 interface ColorControlProps {
   id: string;

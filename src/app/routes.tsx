@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter, Navigate, type RouteObject } from "react-router-dom";
+import { GuestRoute } from "@/components/layout/GuestRoute";
 import { ErrorPage } from "@/components/layout/ErrorPage";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { RouteFallback } from "@/components/layout/RouteFallback";
@@ -30,8 +31,13 @@ const routes: RouteObject[] = [
           { path: "templates", element: page(<Templates />) },
           { path: "templates/:category", element: page(<Templates />) },
           { path: "pricing", element: page(<Pricing />) },
-          { path: "login", element: page(<Login />) },
-          { path: "register", element: page(<Register />) },
+          {
+            element: <GuestRoute />,
+            children: [
+              { path: "login", element: page(<Login />) },
+              { path: "register", element: page(<Register />) },
+            ],
+          },
           {
             element: <ProtectedRoute />,
             children: [

@@ -1,6 +1,6 @@
 import { Textarea } from "@/components/ui/textarea";
 import { useInvitationStore } from "@/stores/invitationStore";
-import { Field } from "../controls/Field";
+import { Field } from "@/components/ui/field";
 import { PanelSection } from "../PanelSection";
 
 const MAX = 300;
