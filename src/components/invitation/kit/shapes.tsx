@@ -66,6 +66,18 @@ const Square = ({ color, opacity = 1, className }: KitPieceProps) => (
   </Svg>
 );
 
+const Heart = ({ color, opacity = 1, className }: KitPieceProps) => (
+  <Svg className={className}>
+    <path d="M50 92C20 68 6 52 6 33C6 18 17 8 30 8C39 8 46 12 50 20C54 12 61 8 70 8C83 8 94 18 94 33C94 52 80 68 50 92Z" fill={color} opacity={opacity} />
+  </Svg>
+);
+
+const Droplet = ({ color, opacity = 1, className }: KitPieceProps) => (
+  <Svg className={className}>
+    <path d="M50 4C50 4 18 42 18 64C18 82 32 96 50 96C68 96 82 82 82 64C82 42 50 4 50 4Z" fill={color} opacity={opacity} />
+  </Svg>
+);
+
 export const shapes: KitPiece[] = [
   { id: "circle", kind: "shape", label: "Circle", tags: ["modern", "playful", "colorful"], colorSlots: ["accent"], component: Circle },
   { id: "ring", kind: "shape", label: "Ring", tags: ["modern", "playful", "editorial"], colorSlots: ["accent"], component: Ring },
@@ -75,4 +87,6 @@ export const shapes: KitPiece[] = [
   { id: "starburst", kind: "shape", label: "Starburst", tags: ["playful", "colorful", "vintage"], colorSlots: ["accent"], component: Starburst },
   { id: "squiggle", kind: "shape", label: "Squiggle", tags: ["playful", "colorful", "modern"], colorSlots: ["accent"], component: Squiggle },
   { id: "square", kind: "shape", label: "Square", tags: ["modern", "editorial", "minimal"], colorSlots: ["text"], component: Square },
+  { id: "heart", kind: "shape", label: "Heart", tags: ["romantic", "playful", "traditional"], colorSlots: ["accent"], component: Heart },
+  { id: "droplet", kind: "shape", label: "Droplet", tags: ["minimal", "modern", "botanical"], colorSlots: ["accent"], component: Droplet },
 ];

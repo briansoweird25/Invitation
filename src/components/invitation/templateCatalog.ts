@@ -10,6 +10,9 @@ import { confettiBirthday } from "./templates/birthday/confetti-birthday/meta";
 import { editorialBirthday } from "./templates/birthday/editorial-birthday/meta";
 import { modernBirthday } from "./templates/birthday/modern-birthday/meta";
 import { vintageBirthday } from "./templates/birthday/vintage-birthday/meta";
+import { chalkboardGraduation } from "./templates/graduation/chalkboard-graduation/meta";
+import { goldenGraduation } from "./templates/graduation/golden-graduation/meta";
+import { varsityGraduation } from "./templates/graduation/varsity-graduation/meta";
 import { elegantWedding } from "./templates/wedding/elegant-wedding/meta";
 import { floralWedding } from "./templates/wedding/floral-wedding/meta";
 import { luxuryWedding } from "./templates/wedding/luxury-wedding/meta";
@@ -31,6 +34,9 @@ const metas: TemplateMeta[] = [
   botanicalBabyShower,
   rainbowBabyShower,
   moonlightBabyShower,
+  varsityGraduation,
+  goldenGraduation,
+  chalkboardGraduation,
 ];
 
 export type TemplateId = string;

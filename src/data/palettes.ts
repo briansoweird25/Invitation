@@ -28,6 +28,14 @@ export const palettes: Palette[] = [
   { id: "tangerine-pop", name: "Tangerine Pop", tags: ["playful", "colorful"], backgroundColor: "#FF6B3D", textColor: "#1D1D1B", accentColor: "#FFE9D6" },
   { id: "confetti-bright", name: "Confetti Bright", tags: ["playful", "colorful"], backgroundColor: "#FFF4D6", textColor: "#23233F", accentColor: "#F0457A", secondaryColor: "#2BB3A6" },
   { id: "cobalt-editorial", name: "Cobalt Editorial", tags: ["editorial", "modern"], backgroundColor: "#F5F2EC", textColor: "#10213F", accentColor: "#E4452B" },
+  { id: "graduate-navy", name: "Graduate Navy", tags: ["traditional", "luxury"], backgroundColor: "#14213D", textColor: "#F4F1E8", accentColor: "#F2B705", secondaryColor: "#8FA3C7" },
+  { id: "school-maroon", name: "School Maroon", tags: ["traditional", "vintage"], backgroundColor: "#F6F1E6", textColor: "#3B1218", accentColor: "#8C1C2B", secondaryColor: "#B8963E" },
+  { id: "chalk-slate", name: "Chalk Slate", tags: ["modern", "playful"], backgroundColor: "#2B3A3A", textColor: "#F1EFE6", accentColor: "#E8D9A0", secondaryColor: "#9CC5B8" },
+  { id: "rose-quartz", name: "Rose Quartz", tags: ["romantic", "elegant"], backgroundColor: "#F8ECEC", textColor: "#4A2F36", accentColor: "#B76E79", secondaryColor: "#E3B7B7" },
+  { id: "champagne", name: "Champagne", tags: ["luxury", "elegant"], backgroundColor: "#F7EBD9", textColor: "#4A3A22", accentColor: "#A67C37", secondaryColor: "#D8BE8A" },
+  { id: "boardroom-blue", name: "Boardroom Blue", tags: ["modern", "minimal"], backgroundColor: "#F4F7FA", textColor: "#12263F", accentColor: "#1F6FEB" },
+  { id: "terracotta-supper", name: "Terracotta Supper", tags: ["rustic", "vintage"], backgroundColor: "#F5E6DA", textColor: "#3D2218", accentColor: "#B4532A", secondaryColor: "#6F7B4D" },
+  { id: "holy-white", name: "Holy White", tags: ["traditional", "minimal"], backgroundColor: "#FBFAF6", textColor: "#34404F", accentColor: "#7C8EA8", secondaryColor: "#C8A96A" },
   { id: "paper-ink", name: "Paper & Ink", tags: ["minimal", "modern"], backgroundColor: "#FBFBF9", textColor: "#1D1D1B", accentColor: "#8A867F" },
 ];
 

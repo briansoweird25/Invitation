@@ -27,6 +27,9 @@ export const fontPairings: FontPairing[] = [
   { id: "geometric", name: "Geometric", heading: "Manrope", body: "Inter", tags: ["modern", "minimal"] },
   { id: "friendly-round", name: "Friendly round", heading: "Fredoka", body: "Nunito", tags: ["playful", "colorful"] },
   { id: "brush-party", name: "Brush party", heading: "Baloo 2", body: "Nunito", script: "Pacifico", tags: ["playful", "colorful"] },
+  { id: "supper-club", name: "Supper club", heading: "Bodoni Moda", body: "Lora", script: "Pinyon Script", tags: ["luxury", "elegant", "traditional"] },
+  { id: "heirloom", name: "Heirloom", heading: "Libre Baskerville", body: "Cormorant Garamond", script: "Great Vibes", tags: ["traditional", "romantic"] },
+  { id: "campus", name: "Campus", heading: "Abril Fatface", body: "Manrope", tags: ["traditional", "editorial", "colorful"] },
   { id: "rustic-hand", name: "Rustic hand", heading: "Amatic SC", body: "Lora", script: "Caveat", tags: ["rustic"] },
 ];
 

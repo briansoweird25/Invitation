@@ -18,6 +18,9 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "botanical-baby-shower": () => import("./templates/baby-shower/botanical-baby-shower").then((m) => ({ default: m.BotanicalBabyShower })),
   "rainbow-baby-shower": () => import("./templates/baby-shower/rainbow-baby-shower").then((m) => ({ default: m.RainbowBabyShower })),
   "moonlight-baby-shower": () => import("./templates/baby-shower/moonlight-baby-shower").then((m) => ({ default: m.MoonlightBabyShower })),
+  "varsity-graduation": () => import("./templates/graduation/varsity-graduation").then((m) => ({ default: m.VarsityGraduation })),
+  "golden-graduation": () => import("./templates/graduation/golden-graduation").then((m) => ({ default: m.GoldenGraduation })),
+  "chalkboard-graduation": () => import("./templates/graduation/chalkboard-graduation").then((m) => ({ default: m.ChalkboardGraduation })),
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 

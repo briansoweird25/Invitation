@@ -126,6 +126,32 @@ function Ribbon({ color, secondaryColor, opacity = 0.95, className }: KitPiecePr
   );
 }
 
+function Cross({ color, opacity = 0.9, className }: KitPieceProps) {
+  return (
+    <Svg viewBox="0 0 60 80" className={className}>
+      <g opacity={opacity}>
+        <path d="M26 2H34V24H54V32H34V78H26V32H6V24H26Z" fill={color} />
+      </g>
+    </Svg>
+  );
+}
+
+function SunRays({ color, opacity = 0.9, className }: KitPieceProps) {
+  const rays = Array.from({ length: 16 }, (_, i) => {
+    const a = (i / 16) * Math.PI * 2;
+    const [r1, r2] = i % 2 ? [32, 44] : [32, 50];
+    return <path key={i} d={`M${50 + r1 * Math.cos(a)} ${50 + r1 * Math.sin(a)}L${50 + r2 * Math.cos(a)} ${50 + r2 * Math.sin(a)}`} />;
+  });
+  return (
+    <Svg viewBox="0 0 100 100" className={className}>
+      <g stroke={color} strokeWidth="2.4" strokeLinecap="round" opacity={opacity}>
+        <circle cx="50" cy="50" r="22" fill={color} stroke="none" />
+        {rays}
+      </g>
+    </Svg>
+  );
+}
+
 export const ornaments: KitPiece[] = [
   { id: "divider-diamond", kind: "ornament", label: "Diamond divider", tags: ["elegant", "traditional", "luxury"], colorSlots: ["accent"], component: DividerDiamond },
   { id: "divider-flourish", kind: "ornament", label: "Flourish divider", tags: ["romantic", "elegant", "vintage"], colorSlots: ["accent"], component: DividerFlourish },
@@ -135,4 +161,6 @@ export const ornaments: KitPiece[] = [
   { id: "seal", kind: "ornament", label: "Seal", tags: ["vintage", "traditional", "luxury"], colorSlots: ["accent", "secondary"], component: Seal },
   { id: "sparkle", kind: "ornament", label: "Sparkles", tags: ["playful", "luxury", "romantic"], colorSlots: ["accent"], component: Sparkle },
   { id: "ribbon", kind: "ornament", label: "Ribbon banner", tags: ["vintage", "playful", "traditional"], colorSlots: ["accent", "secondary"], component: Ribbon },
+  { id: "cross", kind: "ornament", label: "Cross", tags: ["traditional", "minimal", "elegant"], colorSlots: ["accent"], component: Cross },
+  { id: "sun-rays", kind: "ornament", label: "Sun rays", tags: ["traditional", "vintage", "playful"], colorSlots: ["accent"], component: SunRays },
 ];
