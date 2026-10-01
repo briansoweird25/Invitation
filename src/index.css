@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/inter";
+
+/* Design tokens — see DESIGN.md. Application UI is quiet; invitations are expressive. */
+:root {
+  --background: #faf9f6;
+  --foreground: #1d1d1b;
+  --surface: #ffffff;
+  --muted: #f3f1ec;
+  --muted-foreground: #6f6c65;
+  --subtle-foreground: #9b978f;
+  --border: #e7e3dc;
+  --input: #e7e3dc;
+  --ring: #8a7352;
+  --accent: #8a7352;
+  --accent-foreground: #ffffff;
+  --destructive: #b3261e;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-primary: var(--foreground);
+  --color-primary-foreground: var(--background);
+
+  --radius-sm: 6px;
+  --radius-md: var(--radius);
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+
+  --shadow-soft: 0 4px 20px rgb(29 29 27 / 0.06);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
