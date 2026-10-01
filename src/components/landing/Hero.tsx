@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
-import { SampleInvitation } from "./SampleInvitations";
+import { SampleInvitation } from "@/components/templates/SampleInvitations";
 
 export function Hero() {
   return (

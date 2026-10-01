@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { SampleId } from "@/data/landing";
+import type { TemplateId } from "@/data/templates";
 import { cn } from "@/lib/utils";
 
 /*
@@ -111,14 +111,14 @@ function ModernBirthday() {
   );
 }
 
-const samples: Record<SampleId, () => ReactNode> = {
+const samples: Record<TemplateId, () => ReactNode> = {
   "elegant-wedding": ElegantWedding,
   "floral-wedding": FloralWedding,
   "minimal-wedding": MinimalWedding,
   "modern-birthday": ModernBirthday,
 };
 
-export function SampleInvitation({ id }: { id: SampleId }) {
+export function SampleInvitation({ id }: { id: TemplateId }) {
   const Sample = samples[id];
   return <Sample />;
 }
