@@ -15,6 +15,7 @@ export const DELETE_ERROR_MESSAGE = "We couldn't delete your invitation. Please 
 export const PUBLISH_ERROR_MESSAGE = "We couldn't publish your invitation. Please try again.";
 export const UNPUBLISH_ERROR_MESSAGE = "We couldn't unpublish your invitation. Please try again.";
 export const PUBLISH_NEEDS_NAMES_MESSAGE = "Add the host names in the editor before publishing.";
+export const PUBLIC_LOAD_ERROR_MESSAGE = "We couldn't load this invitation. Please try again.";
 export const LOAD_ERROR_MESSAGE = "We couldn't open your invitation. Please try again.";
 
 const rowSchema = z.object({
@@ -181,4 +182,27 @@ export async function unpublishInvitation(invitation: Invitation): Promise<Invit
     .single();
   if (error) fail(error, UNPUBLISH_ERROR_MESSAGE);
   return toInvitation(data);
+}
+
+/** What a guest may see. It leaves out the owner id and timestamps. */
+export type PublicInvitation = Pick<Invitation, "id" | "title" | "slug" | "category" | "templateId" | "content" | "design" | "rsvp">;
+
+const PUBLIC_COLUMNS = "id, title, slug, category, template_id, content, design, rsvp_settings";
+
+const publicRowSchema = rowSchema.pick({ id: true, title: true, slug: true, category: true, template_id: true, content: true, design: true, rsvp_settings: true });
+
+/**
+ * Loads a published invitation by its slug for the public page. Anyone may call this, signed in or not.
+ * Returns null when the slug is malformed, unknown or not published, so a draft can never be told apart from a missing page.
+ * Throws a friendly error only when the request itself fails.
+ */
+export async function getPublishedInvitation(slug: string): Promise<PublicInvitation | null> {
+  if (!slugSchema.safeParse(slug).success) return null;
+  const { data, error } = await client().from("invitations").select(PUBLIC_COLUMNS).eq("slug", slug).eq("status", "published").maybeSingle();
+  if (error) fail(error, PUBLIC_LOAD_ERROR_MESSAGE);
+  if (!data) return null;
+  const parsed = publicRowSchema.safeParse(data);
+  if (!parsed.success) return fail(parsed.error, PUBLIC_LOAD_ERROR_MESSAGE);
+  const row = parsed.data;
+  return { id: row.id, title: row.title, slug: row.slug ?? slug, category: row.category, templateId: row.template_id, content: row.content, design: row.design, rsvp: row.rsvp_settings };
 }

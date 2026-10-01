@@ -281,7 +281,7 @@ Dashboard.
 
 ## Phase 9
 
-Public invitations.
+Public invitations. **Done.** `/invitation/:slug` loads a published invitation by slug through `getPublishedInvitation` (only the columns a guest needs, filtered to `status = 'published'`, in addition to the database policy), renders it with the same `InvitationRenderer`, and offers copy link and the device share sheet. When RSVP is on it shows the reply deadline and the host's contact details. Drafts, unknown and malformed slugs all show the same "not available" page; a failed load shows a friendly message with a retry. The page asks search engines not to index it. Link previews: the app is a single-page app, so shared links show the site's generic title and image; per-invitation previews need server-side rendering or a Netlify edge function and are a later improvement. The RSVP reply form is Phase 10.
 
 ## Phase 10
 
