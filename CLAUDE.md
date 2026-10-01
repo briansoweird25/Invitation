@@ -172,9 +172,9 @@ src/
 │   │   ├── panels/
 │   │   └── controls/
 │   ├── invitation/         renderer, catalog, kit, layouts, templates
-│   │   ├── kit/            shared decoration pieces (target)
-│   │   ├── layouts/        reusable layout primitives (target)
-│   │   └── templates/      one folder per template
+│   │   ├── kit/            shared decoration pieces
+│   │   ├── layouts/        reusable layout primitives (planned)
+│   │   └── templates/      <category>/<template-id>/ with index.tsx and meta.ts
 │   ├── dashboard/
 │   └── rsvp/
 ├── pages/
@@ -188,7 +188,7 @@ src/
 docs/
 └── TEMPLATE_SYSTEM.md
 
-Items marked "target" are described in `docs/TEMPLATE_SYSTEM.md` and are not built yet.
+Items marked "planned" are described in `docs/TEMPLATE_SYSTEM.md` and are not built yet.
 
 Keep related functionality together.
 
@@ -295,31 +295,16 @@ Templates must be independent from invitation data.
 
 Use a template registry. A template is a component plus catalog metadata.
 
-Current shape (implemented):
+Implemented (Template System v2, steps T1 and T2; details in `docs/TEMPLATE_SYSTEM.md`):
 
-```ts
-export const templateRegistry = {
-  "elegant-wedding": {
-    name: "Elegant Wedding",
-    category: "wedding",
-    description: "...",
-    isPremium: false,
-    component: ElegantWedding,
-    decorationOptions: [{ id: "border", label: "Thin border" }],
-    defaultDesign: { /* fonts, colors, decorations */ },
-    sampleContent: { /* sample invitation content */ },
-  },
-  // floral-wedding, minimal-wedding, modern-birthday
-};
-```
+- **Catalog metadata** (`templateCatalog.ts`): id, name, category, style tags, layout, tier, status, capabilities and presets. It is small and always loaded.
+- **Components** (`templateLoader.ts`): lazy, one chunk per template. Each template lives in `templates/<category>/<id>/` with `index.tsx` and `meta.ts`.
+- **Presets**: curated variations of one template (a complete resolved design each). `?preset=` selects one.
+- **Capabilities**: what the editor may offer for a template (decorations, frames, patterns, washes, background image). Panels with nothing to offer are hidden.
+- **The kit** (`components/invitation/kit/`): 47 shared SVG pieces (frames, botanicals, patterns, ornaments, shapes, backgrounds) that recolor from the design.
+- **Validation**: `npm run check:templates` checks the catalog and kit against these rules.
 
-Target shape (see `docs/TEMPLATE_SYSTEM.md`):
-
-- **Catalog metadata** (id, name, category, style tags, layout, tier, status, capabilities, presets) is small and always loaded.
-- **Components** load lazily, one chunk per template or category.
-- **Presets** are curated variations of one template: palette, font pairing, decorations, frame, pattern, background.
-- **Capabilities** declare what the editor may offer for a template. Panels with nothing to offer are hidden.
-- **The kit** is a shared library of SVG decoration pieces (frames, botanicals, patterns, ornaments, shapes, illustrations, backgrounds) that recolor from the palette.
+Planned: illustrations in the kit, palette and font-pairing libraries, layout primitives, thumbnail pickers.
 
 Rules:
 
@@ -378,8 +363,8 @@ Birthday:
 
 Do not build many templates before the architecture is ready. Order of work:
 
-1. Template System v2: taxonomy, category config, catalog/loader split, presets, migrating the four reference templates.
-2. Kit v1: a small set of shared frames, botanicals, patterns, ornaments, shapes and backgrounds.
+1. Template System v2: taxonomy, category config, catalog/loader split, presets, migrating the four reference templates. **Done (T1).**
+2. Kit v1: shared frames, botanicals, patterns, ornaments, shapes and backgrounds. **Done (T2).**
 3. Palette and font-pairing libraries, plus capability-driven editor pickers.
 4. Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews.
 5. Template batches, one category at a time (about three to four per category), each tested in the gallery, editor and dashboard before the next.
@@ -403,12 +388,12 @@ The renderer draws in layers (see `docs/TEMPLATE_SYSTEM.md` section 3.7):
 
 0. Background (color, gradient, texture or image)
 1. Pattern
-2. Frame
+2. Frame (drawn by the renderer from `design.frame`)
 3. Decorations behind the text
 4. Content
 5. Foreground ornaments
 
-The renderer owns the canvas, the background and the pattern. The template owns the frame, decorations, content and ornaments, built from kit pieces.
+The renderer owns the canvas, the background, the pattern and the frame, all driven by `design`. The template owns the decorations, content and ornaments, built from kit pieces.
 
 It fills the width it is given and scales through `cqw` units.
 
@@ -1020,13 +1005,13 @@ Phase 13: Monetization
 
 Template work runs alongside the numbered phases. See `docs/TEMPLATE_SYSTEM.md` section 11.
 
-T1: Template System v2 (taxonomy, category config, catalog/loader split, presets). No visual change.
-T2: Kit v1 (frames, botanicals, patterns, ornaments, shapes, backgrounds).
+T1: Template System v2 (taxonomy, category config, catalog/loader split, presets). Done.
+T2: Kit v1 (frames, botanicals, patterns, ornaments, shapes, backgrounds). Done.
 T3: Palette and font-pairing libraries, capability-driven editor pickers.
 T4: Gallery upgrade (13 categories, style filters, variations, lazy previews).
 T5+: Template batches, one category at a time.
 
-Recommended: finish T1 and T2 before Phase 9 (public invitations) and Phase 11 (export), so those render the richer templates from the start.
+T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) render the richer templates from the start.
 
 ---
 

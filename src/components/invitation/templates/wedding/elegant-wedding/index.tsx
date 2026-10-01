@@ -1,17 +1,25 @@
 import { dateParts, formatTime, joinText, splitHostNames } from "@/lib/invitationFormat";
 import { resolveFont } from "@/lib/fonts";
 import type { TemplateProps } from "@/types/invitation";
+import { Kit } from "../../../kit/Kit";
 
 export function ElegantWedding({ content, design }: TemplateProps) {
   const [first, second] = splitHostNames(content.hostNames);
   const d = dateParts(content.date);
   const dateText = d ? `${d.weekday}, ${d.day} ${d.month} ${d.year}` : content.date;
   const heading = { fontFamily: resolveFont(design.headingFont) };
+  const flourish = design.decorations?.includes("flourish") ?? false;
+  const corners = design.decorations?.includes("corner-flourish") ?? false;
 
   return (
     <>
-      {design.decorations?.includes("border") && (
-        <div className="absolute inset-[5cqw] border" style={{ borderColor: design.accentColor, opacity: 0.6 }} />
+      {corners && (
+        <>
+          <Kit kind="ornament" id="corner-flourish" design={design} className="absolute left-[8cqw] top-[8cqw] size-[12cqw]" />
+          <Kit kind="ornament" id="corner-flourish" design={design} className="absolute right-[8cqw] top-[8cqw] size-[12cqw] rotate-90" />
+          <Kit kind="ornament" id="corner-flourish" design={design} className="absolute bottom-[8cqw] right-[8cqw] size-[12cqw] rotate-180" />
+          <Kit kind="ornament" id="corner-flourish" design={design} className="absolute bottom-[8cqw] left-[8cqw] size-[12cqw] -rotate-90" />
+        </>
       )}
       <div className="absolute inset-0 flex flex-col items-center justify-center px-[14cqw] text-center">
         {content.eventTitle && (
@@ -30,7 +38,11 @@ export function ElegantWedding({ content, design }: TemplateProps) {
             </>
           )}
         </h3>
-        <div className="my-[6cqw] h-px w-[12cqw] opacity-70" style={{ backgroundColor: design.accentColor }} />
+        {flourish ? (
+          <Kit kind="ornament" id="divider-flourish" design={design} className="my-[5cqw] h-auto w-[30cqw]" />
+        ) : (
+          <div className="my-[6cqw] h-px w-[12cqw] opacity-70" style={{ backgroundColor: design.accentColor }} />
+        )}
         <p className="text-[5cqw]" style={heading}>
           {dateText}
         </p>

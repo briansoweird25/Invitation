@@ -1,9 +1,9 @@
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
-import { getTemplate, type TemplateId } from "@/components/invitation/templateRegistry";
+import { getPreset, getTemplate, sampleContentFor, type TemplateId } from "@/components/invitation/templateCatalog";
 
-/** A template rendered with its own sample content and default design. */
-export function TemplatePreview({ id }: { id: TemplateId }) {
+/** A template rendered with its sample content and a preset (the default one unless given). */
+export function TemplatePreview({ id, presetId }: { id: TemplateId; presetId?: string }) {
   const template = getTemplate(id);
   if (!template) return null;
-  return <InvitationRenderer templateId={id} content={template.sampleContent} design={template.defaultDesign} />;
+  return <InvitationRenderer templateId={id} content={sampleContentFor(template)} design={getPreset(template, presetId).design} />;
 }

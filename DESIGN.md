@@ -675,7 +675,7 @@ Templates choose a layout. Different layouts are what make templates feel differ
 
 ## B5. Decoration Library
 
-Decorations are shared **kit pieces** (see `docs/TEMPLATE_SYSTEM.md`). They recolor with the palette and scale with the card.
+Decorations are shared **kit pieces** (see `docs/TEMPLATE_SYSTEM.md`). They recolor with the palette and scale with the card. Kit v1 (47 pieces) covers frames, botanicals, patterns, ornaments, shapes and backgrounds; illustrations are still to come.
 
 ### Frames and borders
 

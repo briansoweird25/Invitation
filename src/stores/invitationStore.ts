@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import type { TemplateId } from "@/components/invitation/templateRegistry";
 import { createInvitationDraft } from "@/lib/invitation";
 import type {
   Invitation,
@@ -22,7 +21,7 @@ interface InvitationState {
   design: InvitationDesign;
   rsvp: RSVPSettings;
   status: InvitationStatus;
-  init: (templateId: TemplateId) => void;
+  init: (templateId: string, presetId?: string) => void;
   load: (invitation: Invitation) => void;
   setId: (id: string) => void;
   setTitle: (title: string) => void;
@@ -36,8 +35,8 @@ const markDirty = () => useEditorStore.getState().setDirty(true);
 export const useInvitationStore = create<InvitationState>((set) => ({
   id: null,
   ...createInvitationDraft("elegant-wedding"),
-  init: (templateId) => {
-    set({ id: null, ...createInvitationDraft(templateId) });
+  init: (templateId, presetId) => {
+    set({ id: null, ...createInvitationDraft(templateId, presetId) });
     useEditorStore.getState().setDirty(false);
   },
   load: (invitation) => {

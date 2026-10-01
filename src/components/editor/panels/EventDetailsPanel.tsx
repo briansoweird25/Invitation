@@ -1,3 +1,4 @@
+import { getCategoryConfig } from "@/data/categories";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useInvitationStore } from "@/stores/invitationStore";
@@ -8,17 +9,17 @@ export function EventDetailsPanel() {
   const category = useInvitationStore((s) => s.category);
   const content = useInvitationStore((s) => s.content);
   const update = useInvitationStore((s) => s.updateContent);
-  const birthday = category === "birthday";
+  const { hostNames, eventTitle } = getCategoryConfig(category).fields;
 
   return (
     <PanelSection id="event" title="Event details">
-      <Field id="event-hostNames" label={birthday ? "Name" : "Names"} helper={birthday ? undefined : 'For example "Eleanor & James".'}>
+      <Field id="event-hostNames" label={hostNames.label} helper={hostNames.helper}>
         <Input id="event-hostNames" value={content.hostNames} maxLength={80} onChange={(e) => update({ hostNames: e.target.value })} />
       </Field>
       <Field
         id="event-eventTitle"
-        label={birthday ? "Headline" : "Opening line"}
-        helper={birthday ? 'For example "turns 30".' : 'For example "Together with their families".'}
+        label={eventTitle.label}
+        helper={eventTitle.helper}
       >
         <Input id="event-eventTitle" value={content.eventTitle} maxLength={60} onChange={(e) => update({ eventTitle: e.target.value })} />
       </Field>

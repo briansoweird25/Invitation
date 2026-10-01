@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { categoriesWithTemplates } from "@/components/invitation/templateCatalog";
+import { getCategoryConfig } from "@/data/categories";
 import { Container } from "./Container";
 
 const columns = [
@@ -12,10 +14,7 @@ const columns = [
   },
   {
     title: "Occasions",
-    links: [
-      { to: "/templates/wedding", label: "Wedding" },
-      { to: "/templates/birthday", label: "Birthday" },
-    ],
+    links: categoriesWithTemplates().map((id) => ({ to: `/templates/${id}`, label: getCategoryConfig(id).label })),
   },
 ];
 

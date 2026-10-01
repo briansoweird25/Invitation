@@ -6,7 +6,7 @@ import { CategoryNav } from "@/components/templates/CategoryNav";
 import { TemplateCard } from "@/components/templates/TemplateCard";
 import { TemplatePreviewDialog } from "@/components/templates/TemplatePreviewDialog";
 import { Button } from "@/components/ui/button";
-import { getTemplate, templateList, type TemplateId } from "@/components/invitation/templateRegistry";
+import { getTemplate, templateList, type TemplateId } from "@/components/invitation/templateCatalog";
 import { isTemplateCategory } from "@/data/templates";
 import NotFound from "./NotFound";
 

@@ -94,7 +94,7 @@ RSVP
 
 ## Template library (growing)
 
-Four reference templates exist today (Elegant, Floral and Minimal Wedding, and Modern Birthday). The architecture is being extended to support:
+Four reference templates exist today (Elegant, Floral and Minimal Wedding, and Modern Birthday), each with three presets, built on a shared decoration kit of 47 pieces. The template system supports:
 
 - 13 categories: Wedding, Birthday, Baby Shower, Bridal Shower, Engagement, Anniversary, Graduation, Baptism, Communion, Retirement, Dinner Party, Corporate Event, General Party
 - 13 style tags: Elegant, Romantic, Floral, Modern, Minimal, Luxury, Vintage, Rustic, Botanical, Playful, Colorful, Traditional, Editorial
@@ -307,6 +307,7 @@ npm install
 npm run dev
 npm run build
 npm run preview
+npm run check:templates   # validates the template catalog and decoration kit
 ```
 
 Check `package.json` for the project's actual scripts before running commands.

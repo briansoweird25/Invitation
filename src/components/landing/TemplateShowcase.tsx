@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Container } from "@/components/layout/Container";
-import { templateList } from "@/components/invitation/templateRegistry";
+import { templateList } from "@/components/invitation/templateCatalog";
 import { TemplatePreview } from "@/components/templates/TemplatePreview";
 import { SectionHeading } from "./SectionHeading";
 

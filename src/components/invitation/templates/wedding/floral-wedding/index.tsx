@@ -1,23 +1,25 @@
 import { dateParts, formatTime, joinText, splitHostNames } from "@/lib/invitationFormat";
 import { resolveFont } from "@/lib/fonts";
 import type { TemplateProps } from "@/types/invitation";
-import { Sprig } from "./Sprig";
+import { Kit } from "../../../kit/Kit";
 
 export function FloralWedding({ content, design }: TemplateProps) {
   const [first, second] = splitHostNames(content.hostNames);
   const d = dateParts(content.date);
   const dateText = d ? `${d.month} ${d.day}, ${d.year}` : content.date;
   const heading = { fontFamily: resolveFont(design.headingFont) };
-  const showSprigs = design.decorations?.includes("sprigs") ?? false;
+  const has = (id: string) => design.decorations?.includes(id) ?? false;
 
   return (
     <>
-      {showSprigs && (
+      {has("sprigs") && (
         <>
-          <Sprig color={design.accentColor} className="absolute -left-[3cqw] -top-[3cqw] w-[36cqw] -scale-x-100" />
-          <Sprig color={design.accentColor} className="absolute -bottom-[3cqw] -right-[3cqw] w-[36cqw] rotate-180 -scale-x-100" />
+          <Kit kind="botanical" id="sprig" design={design} className="absolute -left-[3cqw] -top-[3cqw] w-[36cqw] -scale-x-100" />
+          <Kit kind="botanical" id="sprig" design={design} className="absolute -bottom-[3cqw] -right-[3cqw] w-[36cqw] rotate-180 -scale-x-100" />
         </>
       )}
+      {has("corner-bouquet") && <Kit kind="botanical" id="corner-bouquet" design={design} className="absolute -right-[4cqw] -top-[4cqw] w-[44cqw] -scale-y-100 -scale-x-100" />}
+      {has("garland") && <Kit kind="botanical" id="leaf-garland" design={design} className="absolute inset-x-0 top-[2cqw] h-auto w-full" />}
       <div className="absolute inset-0 flex flex-col justify-center px-[12cqw] pb-[4cqw] pt-[24cqw]">
         {content.eventTitle && (
           <p className="text-[2.6cqw] uppercase tracking-[0.28em]" style={{ color: design.accentColor }}>

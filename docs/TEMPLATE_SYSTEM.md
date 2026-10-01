@@ -4,8 +4,8 @@ This document is the architecture reference for invitation templates: how they a
 
 It has two parts:
 
-- **Current implementation** is what exists in the code today (Phases 4–5).
-- **Target architecture** is where the template system is going. It is documented here so that the code can be refactored toward it without breaking anything that already works.
+- **Current implementation** is what exists in the code today. Steps T1 (Template System v2) and T2 (Kit v1) are done.
+- **Target architecture** is where the template system is going. Parts that are not built yet are marked *(planned)*.
 
 Read `CLAUDE.md` for the rules that apply to the whole product and `DESIGN.md` (Part B) for the visual language of the templates.
 
@@ -24,37 +24,46 @@ Read `CLAUDE.md` for the rules that apply to the whole product and `DESIGN.md` (
 
 # 2. Current implementation
 
-Template components live in `src/components/invitation/templates/`. They are registered in `src/components/invitation/templateRegistry.ts`.
-
-```ts
-interface TemplateDefinition {
-  name: string;
-  category: InvitationCategory;        // "wedding" | "birthday"
-  description: string;
-  isPremium: boolean;
-  component: ComponentType<TemplateProps>;
-  decorationOptions: DecorationOption[];
-  defaultDesign: InvitationDesign;
-  sampleContent: InvitationContent;
-}
+```text
+src/data/
+├── taxonomy.ts             13 categories, 13 style tags, 10 layouts, category fallback
+├── categories.ts           per-category config: labels, helpers, sample content, suggestions
+└── palettes.ts             six palettes used by the Colors panel (library planned for T3)
+src/components/invitation/
+├── InvitationRenderer.tsx  canvas, background, wash, pattern, frame, then the template
+├── templateTypes.ts        TemplateMeta, DesignPreset, TemplateCapabilities
+├── templateCatalog.ts      metadata for every template (no components)
+├── templateLoader.ts       lazy component per template id
+├── kit/                    47 shared decoration pieces
+│   ├── frames.tsx  botanicals.tsx  patterns.tsx  ornaments.tsx  shapes.tsx  backgrounds.tsx
+│   ├── registry.ts         kit metadata and lookup
+│   ├── Kit.tsx             draws a piece with the invitation's colors
+│   └── types.ts
+└── templates/<category>/<template-id>/
+    ├── index.tsx           the component
+    └── meta.ts             the catalog entry
+scripts/checkTemplates.ts   validates the catalog and kit (npm run check:templates)
 ```
 
-- `InvitationRenderer` looks up a template by id, draws the card (fixed 4:5 ratio, `@container` so sizes use `cqw` units, background color or image, text color, body font) and renders the template inside it.
-- A template receives `{ content, design }` and positions its own frame, decorations and text.
-- Decorations are string ids in `design.decorations`. Each template declares which ids it understands in `decorationOptions`. Unknown ids are ignored.
-- Palettes (`src/data/palettes.ts`) and fonts (`src/lib/fonts.ts`) are single global lists.
-- The editor reads `decorationOptions`, the palettes and the fonts to build its panels.
-- Four templates exist: Elegant Wedding, Floral Wedding, Minimal Wedding and Modern Birthday. They are the **reference templates**: they prove the architecture and set the quality bar.
-- The `invitations` table stores `template_id` and `category` as plain text with no foreign key and no enum. `content`, `design` and `rsvp_settings` are JSONB. See section 9 for why no schema change is needed.
+**Catalog.** `TemplateMeta` (see 3.3) is small and always loaded. Components load on demand through `templateLoader.ts`, so adding templates does not grow the main bundle. Retired templates still resolve through `getTemplate` but are left out of `templateList`.
 
-Limitations that the target architecture removes:
+**Renderer.** `InvitationRenderer` draws the card (fixed 4:5 ratio, `@container`, so sizes use `cqw` units) and these layers, back to front: background color or image, kit background wash, kit pattern, kit frame, then the template. The template draws decorations, content and ornaments. A template component suspends briefly while its chunk loads, and the card background shows meanwhile, so there is no layout shift.
 
-- Only two categories and no style tags.
-- Each template carries a single default design. There are no variations.
-- Decorations are drawn inside each template, so nothing is shared.
-- Every template component is bundled eagerly with the app.
-- The editor has hardcoded category checks (for example labels for birthdays).
-- The client validates `category` with a two-value enum.
+**Legacy designs.** Invitations saved before frames existed used the `"border"` decoration. The renderer treats a design with that decoration and no `frame` as having the `thin-line` frame. Choosing a frame in the editor (including None) removes `"border"`, so None really means none.
+
+**Presets.** Each template has three presets. A preset is `{ id, name, design }` where `design` is a complete, resolved `InvitationDesign`. The first preset is the default. `/editor/new?template=<id>&preset=<id>` starts from a preset, and an unknown preset falls back to the default. The starting design records `presetId` as an editor hint.
+
+**Capabilities.** The editor builds its panels from `capabilities`: template decorations (toggles), allowed frames, patterns and background washes (kit ids), and whether the template accepts a background image. The Decorations panel is hidden when a template offers nothing. Selects for frame, pattern and wash are simple for now; thumbnail pickers come in T3.
+
+**Categories.** Event details labels and helper text come from `data/categories.ts`, so there are no hardcoded `category === "birthday"` checks. A template's sample content is the category sample plus the template's own overrides. The gallery lists only categories that have templates.
+
+**Validation.** Stored rows are validated on load. An unknown `category` falls back to `general-party`. The design schema accepts the new optional keys.
+
+**Reference templates.** Elegant Wedding, Floral Wedding, Minimal Wedding and Modern Birthday use the kit. They prove the architecture and set the quality bar.
+
+**Database.** `invitations.template_id` and `category` are plain text with no foreign key and no enum. `content`, `design` and `rsvp_settings` are JSONB. See section 9.
+
+**Still to do:** palette and font-pairing libraries and thumbnail pickers (T3), gallery filters by style and variations in the preview dialog (T4), more templates (T5+), illustrations in the kit, and lazy loading of kit pieces if the kit grows large.
 
 ---
 
@@ -70,15 +79,10 @@ components/invitation/
 ├── templateCatalog.ts      light metadata for every template (always loaded)
 ├── templateLoader.ts       lazy loading of template components
 ├── kit/                    shared decoration library (SVG components)
-│   ├── frames/
-│   ├── botanicals/
-│   ├── patterns/
-│   ├── ornaments/          dividers, corners, flourishes, seals
-│   ├── shapes/
-│   ├── illustrations/
-│   ├── backgrounds/
+│   ├── frames.tsx botanicals.tsx patterns.tsx ornaments.tsx shapes.tsx backgrounds.tsx
+│   ├── illustrations.tsx   (planned)
 │   └── registry.ts         kit metadata (id, kind, label, tags, color slots)
-├── layouts/                reusable layout primitives
+├── layouts/                reusable layout primitives (planned)
 └── templates/
     └── <category>/<template-id>/
         ├── index.tsx       the component
@@ -86,7 +90,7 @@ components/invitation/
         └── thumbnail.*     optional static thumbnail
 ```
 
-You do not need to build all of this at once. Section 11 gives the order.
+Section 2 shows what is built. Section 11 gives the order for the rest.
 
 ## 3.1 Taxonomy
 
@@ -169,18 +173,16 @@ A template declares what it can do. The editor builds its panels from this list.
 
 ```ts
 interface TemplateCapabilities {
-  decorations: DecorationSlot[];      // kit pieces the user can toggle, by slot
-  frames: FrameId[];                  // frames it can draw (can be empty)
-  patterns: PatternId[];
-  backgrounds: BackgroundKind[];      // "solid" | "gradient" | "texture" | "image"
-  backgroundImage: boolean;           // accepts an uploaded image
-  fontPairings: FontPairingId[] | "any";
-  palettes: PaletteId[] | "any";
-  contentFields: ContentField[];      // fields this template displays
+  decorations: { id: string; label: string }[];  // template-specific toggles (design.decorations)
+  frames: string[];                   // kit frame ids
+  patterns: string[];                 // kit pattern ids
+  backgrounds: string[];              // kit background ids (washes and textures)
+  backgroundImage: boolean;           // accepts an uploaded or linked image
+  // Planned for T3: fontPairings, palettes, contentFields
 }
 ```
 
-The existing `decorationOptions` becomes `capabilities.decorations`. Panels are hidden when a template offers nothing for them.
+Panels are hidden when a template offers nothing for them.
 
 ## 3.5 Presets (variations)
 
@@ -190,15 +192,11 @@ A **preset** is a complete, curated design: palette, font pairing, decorations, 
 interface DesignPreset {
   id: string;                         // unique within the template
   name: string;                       // "Ivory & Gold"
-  paletteId: PaletteId;
-  fontPairingId: FontPairingId;
-  decorations?: string[];
-  frame?: { id: FrameId };
-  pattern?: { id: PatternId; opacity?: number };
-  background?: BackgroundSpec;
-  thumbnailColors?: [string, string]; // gallery backdrop tint
+  design: InvitationDesign;           // resolved values: fonts, colors, frame, pattern, decorations
 }
 ```
+
+Presets store resolved values, which is what an invitation stores. When the palette and font-pairing libraries arrive (T3), presets will also record `paletteId` and `fontPairingId` as hints inside `design`.
 
 - The gallery shows each template with its default preset. The preview dialog offers the other presets as swatches.
 - Choosing a preset starts the editor with that design: `/editor/new?template=<id>&preset=<presetId>`. A missing or unknown preset means the default one.
@@ -276,13 +274,13 @@ interface FontPairing {
 
 ## 3.7 Rendering pipeline
 
-The renderer draws in layers. Layers 0 to 2 are generic. Layers 3 to 5 belong to the template and are built from kit pieces.
+The renderer draws in layers. Layers 0 to 2 are generic and driven by `design`. Layers 3 to 5 belong to the template and are built from kit pieces.
 
 | Layer | What | Owner |
 | --- | --- | --- |
-| 0 | Background: color, gradient, texture or image | Renderer |
+| 0 | Background: color or image, plus an optional kit wash or texture | Renderer |
 | 1 | Pattern | Renderer |
-| 2 | Frame or border | Template, using the kit |
+| 2 | Frame or border | Renderer, from `design.frame` |
 | 3 | Decorations behind the text: botanicals, shapes, illustrations | Template, using the kit |
 | 4 | Content layout: names, date, venue, message | Template |
 | 5 | Foreground ornaments: corners, seals, flourishes | Template, using the kit |
@@ -296,18 +294,23 @@ Kit pieces are small SVG React components shared by every template.
 ```ts
 interface KitPiece {
   id: string;
-  kind: "frame" | "botanical" | "pattern" | "ornament" | "shape" | "illustration";
+  kind: "frame" | "botanical" | "pattern" | "ornament" | "shape" | "background";  // "illustration" is planned
   label: string;
   tags: TemplateStyle[];
-  colorSlots: ("accent" | "secondary" | "text" | "background")[];  // which design colors it uses
+  colorSlots: ("accent" | "secondary" | "text" | "background")[];  // the first slot supplies `color`
   component: ComponentType<KitPieceProps>;
 }
 ```
 
+Kit v1 holds 47 pieces: 8 frames, 7 botanicals, 8 patterns, 8 ornaments (dividers, corner flourish, laurel, seal, sparkles, ribbon), 8 shapes and 8 backgrounds (soft, dawn and diagonal washes, vignette, paper grain, linen, watercolor, foil sheen). Templates draw a piece with `<Kit kind="botanical" id="sprig" design={design} className="..." />`, which picks the right design color.
+
+Pieces are bundled together for now because each is tiny. Revisit lazy loading when the kit passes about a hundred pieces.
+
 Rules for kit pieces:
 
 - Colors come from `design`, never hardcoded, so every piece recolors with every palette.
-- Size and position come from the parent, in `cqw` units. A piece fills the box it is given.
+- Size and position come from the parent, in `cqw` units. A piece fills the box it is given. Full-card layers (frame, pattern, background) use the card's 100 x 125 coordinate space, so they look the same at every size.
+- SVG `<pattern>`, `<filter>` and gradient ids come from `useUid()`, so many cards on one page never collide.
 - Pure inline SVG or CSS. No raster images, no network requests, no external fonts.
 - Decorative pieces are `aria-hidden`.
 - Each piece is original work or uses a permissive license (see `DESIGN.md` B12).
@@ -319,9 +322,9 @@ A layout is a reusable arrangement of the content fields (centered classic, asym
 ## 3.10 Code splitting
 
 - `templateCatalog.ts` holds only `TemplateMeta`. It is small and always available.
-- Template components load on demand through `templateLoader.ts`, one chunk per template or per category.
-- `InvitationRenderer` renders a lightweight skeleton in the card while the component loads, then the template.
-- The gallery renders previews only for cards that are on or near the screen.
+- Template components load on demand through `templateLoader.ts`, one chunk per template.
+- `InvitationRenderer` shows the card background while the component loads, then the template.
+- The gallery should render previews only for cards that are on or near the screen *(planned, T4)*.
 - Fonts load per pairing in use, not all at once.
 
 ---
@@ -396,26 +399,23 @@ The invitation stays the visual focus. Pickers use small thumbnails of the actua
 - Template metadata for the catalogue (style tags, featured flag, preset names) can optionally be mirrored into `templates.configuration` (JSONB). The in-app catalog is the source of truth. The `templates` table is a read-only mirror that may be seeded by a migration if the data is ever needed server-side.
 - The `design` size limit (20,000 characters) is large enough for the new keys.
 
-Code changes needed later when the taxonomy lands:
-
-- `src/lib/invitationApi.ts` validates `category` with `z.enum(["wedding", "birthday"])`. It must validate against the taxonomy instead, and fall back to `general-party` for an unknown value so one odd row never breaks the dashboard.
-- `src/lib/validation.ts` design schema gets the new optional keys.
-- The `Invitation` type and `InvitationDraft` take their category type from `data/taxonomy.ts`.
+Done in T1: `src/lib/invitationApi.ts` maps any stored `category` through the taxonomy with a `general-party` fallback, `src/lib/validation.ts` accepts the new optional design keys, and the `Invitation` type takes its category from `data/taxonomy.ts`.
 
 ---
 
 # 10. Adding a template (checklist)
 
 1. Pick the category, the style tags and the layout. Check the gallery for overlap. The new template must have a clearly different look.
-2. Create `templates/<category>/<id>/` with `index.tsx` and `meta.ts`.
-3. Build it from layouts and kit pieces. Add a new kit piece only when several templates could use it.
+2. Create `templates/<category>/<id>/` with `index.tsx` (a named export) and `meta.ts`.
+3. Build it from kit pieces (and layouts, once they exist). Add a new kit piece only when several templates could use it.
 4. Draw every piece from `content` and `design`. No event text, no hardcoded colors that should follow the palette.
 5. Define 3 to 5 presets. At least one should be noticeably different in mood.
 6. Declare capabilities honestly. Only list what the template really supports.
 7. Add sample content only when the category sample does not fit.
-8. Register it in the catalog.
-9. Run the quality checklist in `DESIGN.md` B13, including the stress cases in section 5 above.
-10. Check the gallery card, the preview dialog, the editor at desktop and mobile widths, and the dashboard thumbnail.
+8. Add the meta to `templateCatalog.ts` and the lazy import to `templateLoader.ts`.
+9. Run `npm run check:templates`. It checks ids, categories, style tags, layouts, loader registration, preset capabilities, kit ids and contrast.
+10. Run the quality checklist in `DESIGN.md` B13, including the stress cases in section 5 above.
+11. Check the gallery card, the preview dialog, the editor at desktop and mobile widths, and the dashboard thumbnail.
 
 Nothing in the editor, the renderer, the database or the dashboard should need to change. If it does, the architecture needs fixing, not the template.
 
@@ -427,12 +427,12 @@ Template work runs as its own track alongside the numbered phases in `CLAUDE.md`
 
 | Step | Work | Notes |
 | --- | --- | --- |
-| T1 | Taxonomy, category config, catalog/loader split, presets, migrate the four reference templates | No visual change. Update the client category validation. |
-| T2 | Kit v1: frames, botanicals, patterns, ornaments and dividers, shapes, backgrounds | Start small (about six to eight pieces per kind). Used by the reference templates first. |
+| T1 | Taxonomy, category config, catalog/loader split, presets, migrate the four reference templates | **Done.** |
+| T2 | Kit v1: frames, botanicals, patterns, ornaments and dividers, shapes, backgrounds | **Done.** 47 pieces, used by the reference templates. |
 | T3 | Palette and font-pairing libraries, plus the editor pickers | Thumbnail-based pickers. Capability-driven panels. |
 | T4 | Gallery upgrade: 13 categories, style filters, variations in the preview, lazy previews | Landing page category section. |
 | T5+ | Template batches, one category at a time | Aim for three to four templates per category. Suggested order: Wedding, Birthday, Baby Shower, Graduation, General Party, then the rest. |
 
-Recommended order relative to the phases: do T1 and T2 before Phase 9 (public invitations) and Phase 11 (export), so the public page and exports render the richer templates from day one.
+T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) will render the richer templates from day one.
 
 Do not build all templates at once. Build a batch, test it in the gallery, the editor and the dashboard, then continue.

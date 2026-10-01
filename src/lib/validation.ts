@@ -65,6 +65,14 @@ export const invitationDesignSchema = z.object({
   backgroundImage: z.string().optional(),
   borderStyle: z.string().optional(),
   decorations: z.array(z.string()).optional(),
+  secondaryColor: z.string().optional(),
+  scriptFont: z.string().optional(),
+  frame: z.object({ id: z.string(), color: z.string().optional() }).optional(),
+  pattern: z.object({ id: z.string(), color: z.string().optional(), opacity: z.number().optional() }).optional(),
+  background: z.object({ id: z.string(), color: z.string().optional(), opacity: z.number().optional() }).optional(),
+  paletteId: z.string().optional(),
+  fontPairingId: z.string().optional(),
+  presetId: z.string().optional(),
 });
 
 export const rsvpSettingsSchema = z.object({

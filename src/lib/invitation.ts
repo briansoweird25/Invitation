@@ -1,17 +1,21 @@
-import { getTemplate, type TemplateId } from "@/components/invitation/templateRegistry";
+import { getTemplate, startingPoint } from "@/components/invitation/templateCatalog";
+import { FALLBACK_CATEGORY } from "@/data/taxonomy";
 import type { Invitation } from "@/types/invitation";
 
 /** An invitation that has not been saved yet, so it has no id, owner, slug or timestamps. */
 export type InvitationDraft = Pick<Invitation, "title" | "category" | "templateId" | "content" | "design" | "rsvp" | "status">;
 
-export function createInvitationDraft(templateId: TemplateId): InvitationDraft {
-  const template = getTemplate(templateId)!;
+/** Starts a draft from a template and one of its presets (the default preset when none is given). */
+export function createInvitationDraft(templateId: string, presetId?: string | null): InvitationDraft {
+  const template = getTemplate(templateId);
+  if (!template) throw new Error(`Unknown template: ${templateId}`);
+  const { content, design } = startingPoint(template, presetId);
   return {
     title: "Untitled invitation",
-    category: template.category,
+    category: template.category ?? FALLBACK_CATEGORY,
     templateId,
-    content: { ...template.sampleContent },
-    design: { ...template.defaultDesign },
+    content,
+    design,
     rsvp: { enabled: false },
     status: "draft",
   };

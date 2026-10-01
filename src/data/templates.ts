@@ -1,16 +1,10 @@
-import type { TemplateId } from "@/components/invitation/templateRegistry";
-import type { InvitationCategory } from "@/types/invitation";
+import { isInvitationCategory } from "./taxonomy";
 
-export const categories: { id: InvitationCategory; label: string }[] = [
-  { id: "wedding", label: "Wedding" },
-  { id: "birthday", label: "Birthday" },
-];
+export const isTemplateCategory = isInvitationCategory;
 
-export function isTemplateCategory(value: string | undefined): value is InvitationCategory {
-  return categories.some((c) => c.id === value);
-}
-
-/** Where a chosen template leads. The editor reads the id back with `useSelectedTemplate`. */
-export function templateEditorPath(id: TemplateId): string {
-  return `/editor/new?template=${id}`;
+/** Where a chosen template leads. The editor reads these back with `useSelectedTemplate`. */
+export function templateEditorPath(id: string, presetId?: string): string {
+  const params = new URLSearchParams({ template: id });
+  if (presetId) params.set("preset", presetId);
+  return `/editor/new?${params.toString()}`;
 }

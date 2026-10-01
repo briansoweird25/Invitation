@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import type { TemplateListItem } from "@/components/invitation/templateRegistry";
+import type { TemplateListItem } from "@/components/invitation/templateCatalog";
 import { templateEditorPath } from "@/data/templates";
 import { AccessBadge } from "./AccessBadge";
 import { TemplatePreview } from "./TemplatePreview";

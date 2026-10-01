@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { toInvitationCategory } from "@/data/taxonomy";
 import type { Invitation } from "@/types/invitation";
 import type { InvitationDraft } from "./invitation";
 import { slugify, withSuffix } from "./slug";
@@ -20,7 +21,8 @@ const rowSchema = z.object({
   id: z.string(),
   user_id: z.string(),
   template_id: z.string(),
-  category: z.enum(["wedding", "birthday"]),
+  // Unknown categories fall back so one odd row never breaks the dashboard or the editor.
+  category: z.string().transform(toInvitationCategory),
   title: z.string(),
   slug: z.string().nullable(),
   content: invitationContentSchema,

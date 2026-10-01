@@ -1,4 +1,6 @@
-export type InvitationCategory = "wedding" | "birthday";
+import type { InvitationCategory } from "@/data/taxonomy";
+
+export type { InvitationCategory };
 
 export type InvitationStatus = "draft" | "published";
 
@@ -26,8 +28,23 @@ export interface InvitationDesign {
   accentColor: string;
   backgroundImage?: string;
   borderStyle?: string;
-  /** Template-specific decoration keys. Unrecognized keys are ignored. */
+  /** Template-specific decoration toggles (for example "sprigs"). Unknown ids are ignored. */
   decorations?: string[];
+
+  /** A second accent for richer palettes. */
+  secondaryColor?: string;
+  /** Script font for names and flourishes only. */
+  scriptFont?: string;
+  /** Kit frame drawn around the card. */
+  frame?: { id: string; color?: string };
+  /** Kit pattern drawn over the background. */
+  pattern?: { id: string; color?: string; opacity?: number };
+  /** Kit wash or texture drawn over the background color. */
+  background?: { id: string; color?: string; opacity?: number };
+  /** Editor hints only. Renderers always use the resolved values above. */
+  paletteId?: string;
+  fontPairingId?: string;
+  presetId?: string;
 }
 
 export interface RSVPSettings {
