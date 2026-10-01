@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { ExportMenu } from "./ExportMenu";
 import { useEditorStore } from "@/stores/editorStore";
 import { useInvitationStore } from "@/stores/invitationStore";
 
@@ -38,6 +39,7 @@ export function EditorHeader() {
         <p className={cn("text-xs sm:text-sm", saveError ? "text-destructive" : "text-muted-foreground")} role="status">
           {saveError ? "Couldn't save · retrying" : isSaving ? "Saving…" : isDirty ? "Unsaved changes" : isSaved ? "✓ Saved" : "Draft"}
         </p>
+        <ExportMenu />
         <Button size="sm" disabled title="Publish from your dashboard.">
           Publish
         </Button>

@@ -6,6 +6,7 @@ import { InvitationCard } from "@/components/dashboard/InvitationCard";
 import { InvitationSkeletons, InvitationsEmpty, InvitationsError } from "@/components/dashboard/InvitationGridStates";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
+import { useInvitationExport } from "@/hooks/useInvitationExport";
 import { useInvitationList } from "@/hooks/useInvitationList";
 import {
   deleteInvitation,
@@ -14,6 +15,7 @@ import {
   unpublishInvitation,
 } from "@/lib/invitationApi";
 import { displayName, useAuthStore } from "@/stores/authStore";
+import type { ExportFormat } from "@/lib/exportName";
 import type { Invitation } from "@/types/invitation";
 
 export default function Dashboard() {
@@ -21,6 +23,14 @@ export default function Dashboard() {
   const { status, invitations, reload, replaceOne, removeOne } = useInvitationList(user?.id);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Invitation | null>(null);
+  const { active: exportActive, run: runExport } = useInvitationExport();
+  const [exportingId, setExportingId] = useState<string | null>(null);
+
+  async function exportOne(invitation: Invitation, format: ExportFormat) {
+    setExportingId(invitation.id);
+    await runExport(format, { templateId: invitation.templateId, content: invitation.content, design: invitation.design, title: invitation.title });
+    setExportingId(null);
+  }
 
   async function togglePublish(invitation: Invitation) {
     const publishing = invitation.status !== "published";
@@ -82,6 +92,9 @@ export default function Dashboard() {
                     busy={busyId === invitation.id}
                     onTogglePublish={(i) => void togglePublish(i)}
                     onDelete={setPendingDelete}
+                    onExport={(i, format) => void exportOne(i, format)}
+                    exporting={exportingId === invitation.id ? exportActive : null}
+                    exportLocked={exportActive !== null}
                   />
                 </li>
               ))}

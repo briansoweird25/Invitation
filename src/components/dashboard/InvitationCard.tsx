@@ -1,8 +1,9 @@
-import { Eye, EyeOff, MoreHorizontal, Pencil, Trash2, Users } from "lucide-react";
+import { Download, Eye, EyeOff, MoreHorizontal, Pencil, Trash2, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { FORMAT_LABEL, type ExportFormat } from "@/lib/exportName";
 import { dateParts, joinText } from "@/lib/invitationFormat";
 import type { Invitation } from "@/types/invitation";
 import { StatusBadge } from "./StatusBadge";
@@ -12,11 +13,16 @@ interface InvitationCardProps {
   busy: boolean;
   onTogglePublish: (invitation: Invitation) => void;
   onDelete: (invitation: Invitation) => void;
+  onExport: (invitation: Invitation, format: ExportFormat) => void;
+  /** The format being prepared for this card, if any. */
+  exporting: ExportFormat | null;
+  /** True while any card is exporting; only one export runs at a time. */
+  exportLocked: boolean;
 }
 
 const updatedFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-export function InvitationCard({ invitation, busy, onTogglePublish, onDelete }: InvitationCardProps) {
+export function InvitationCard({ invitation, busy, onTogglePublish, onDelete, onExport, exporting, exportLocked }: InvitationCardProps) {
   const { id, title, content, design, status, slug, templateId } = invitation;
   const date = dateParts(content.date);
   const eventLine = joinText([content.hostNames, date ? `${date.day} ${date.monthShort} ${date.year}` : "No date yet"]);
@@ -47,6 +53,12 @@ export function InvitationCard({ invitation, busy, onTogglePublish, onDelete }: 
         {published && slug && <> · /invitation/{slug}</>}
       </p>
 
+      {exporting && (
+        <p role="status" className="mt-2 text-xs text-muted-foreground">
+          Preparing your {FORMAT_LABEL[exporting]}…
+        </p>
+      )}
+
       <div className="mt-4 flex items-center gap-2">
         <Button asChild variant="secondary" size="sm">
           <Link to={`/editor/${id}`}>
@@ -75,6 +87,14 @@ export function InvitationCard({ invitation, busy, onTogglePublish, onDelete }: 
             <DropdownMenuItem onSelect={() => onTogglePublish(invitation)}>
               {published ? <EyeOff /> : <Eye />}
               {published ? "Unpublish" : "Publish"}
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled={exportLocked} onSelect={() => onExport(invitation, "png")}>
+              <Download />
+              Download PNG
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled={exportLocked} onSelect={() => onExport(invitation, "pdf")}>
+              <Download />
+              Download PDF
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => onDelete(invitation)} className="text-destructive">
               <Trash2 />

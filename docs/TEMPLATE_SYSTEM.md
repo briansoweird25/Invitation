@@ -511,7 +511,11 @@ Template work runs as its own track alongside the numbered phases in `CLAUDE.md`
 | T13 | Dinner Party and Corporate Event | **Done.** Supper and Plate Dinner Party; Summit and Gala Corporate. |
 | Next | Third templates for the two-template categories, illustrations, layout primitives, collections and search | Not started. |
 
-T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) will render the richer templates from day one.
+T1 and T2 are in place, so Phase 9 (public invitations) and Phase 11 (export) render the richer templates from day one.
+
+## Exports
+
+`lib/exportInvitation.ts` draws the invitation with `InvitationRenderer` at 1200 CSS px wide off screen and rasterises it (PNG 2400 x 3000, PDF 8 x 10 in). Template authors get exports for free if they keep to the existing rules: draw only with the kit, CSS and the fonts in `lib/fonts.ts` (fonts are embedded from the page's own font rules), use `cqw` units and `FitBox`, and use no external images or `<img>` elements. A template that loads a remote resource would need a CORS-enabled source to appear in exports. The only external image is the owner's background image, which the exporter embeds itself; `InvitationRenderer` accepts embedded `data:image/png|jpeg|webp|gif` for that purpose and never SVG.
 
 ## Category discovery
 

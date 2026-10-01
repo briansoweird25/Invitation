@@ -7,9 +7,13 @@ import { Kit } from "./kit/Kit";
 import { getTemplate } from "./templateCatalog";
 import { getTemplateComponent } from "./templateLoader";
 
-/** Only http(s) links are drawn, and quotes are escaped so the value cannot break out of url(). */
+/**
+ * Only http(s) links and embedded raster images are drawn, and quotes are escaped so the value cannot break out of url().
+ * Embedded images (data URLs) are what export uses so a picture is part of the file, never fetched by it. SVG is not
+ * accepted because it can carry markup.
+ */
 function safeImageUrl(url: string | undefined): string | undefined {
-  if (!url || !/^https?:\/\//i.test(url)) return undefined;
+  if (!url || !/^(https?:\/\/|data:image\/(png|jpeg|webp|gif);base64,)/i.test(url)) return undefined;
   return `url("${url.replace(/["\\\n]/g, encodeURIComponent)}")`;
 }
 

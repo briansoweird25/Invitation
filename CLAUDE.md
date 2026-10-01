@@ -1037,7 +1037,7 @@ Phase 10: RSVP (done)
 - Dashboard
 - Statistics
 
-Phase 11: Export
+Phase 11: Export (done: PNG and PDF, high resolution)
 - PNG
 - PDF
 - HD

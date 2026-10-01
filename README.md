@@ -294,7 +294,15 @@ RSVP. **Done.**
 
 ## Phase 11
 
-Export.
+Export. **Done** for PNG and PDF. The "HD" option is not separate: every export is already high resolution.
+
+- **Where:** an **Export** menu in the editor header (what is on screen, saved or not) and **Download PNG / Download PDF** in each dashboard card's menu (saved invitations, drafts included). Only signed-in owners reach either. Exports run in the browser from data the owner has already loaded; there is no export URL and the public page has no export button.
+- **How:** `lib/exportInvitation.ts` lays the real `InvitationRenderer` out 1200 CSS px wide in an off-screen box, waits for the template chunk, fonts and fitted text to settle, and rasterises it with `html-to-image`. It is the only new dependency (small, no dependencies of its own) and is loaded only when someone exports. There is no second renderer, so every template, Look, frame, pattern, decoration and long-content fit matches the screen.
+- **Output:** PNG at 2400 x 3000 px. PDF is a single 8 x 10 inch page (300 dpi) holding the same picture, written by a small built-in PDF writer (`lib/pdf.ts`, lossless; JPEG at 95% only on browsers without `CompressionStream`). The text in a PDF is part of the picture, not selectable. File names come from the invitation name: "Ava & Noah's Wedding" becomes `ava-and-noah-s-wedding.png`.
+- **Images:** a linked background image is fetched and embedded for the export only (the saved invitation is not changed). If the image host does not allow the browser to read it, or the link is dead, the export stops with a clear message instead of producing a file without the picture. Uploaded images (Supabase Storage public URLs) work when the bucket allows cross-origin reads.
+- **States:** the button shows "Preparing PNG…" and is disabled while one export runs; failures show a friendly toast. A very large canvas that fails on a small device is retried at 1200 x 1500.
+- **Tests:** unit tests for the PDF writer and file names; browser tests check dimensions and file contents, compare the exported picture pixel by pixel with the public page for 18 template and Look combinations, long content, a pre-frames legacy invitation, linked images (success, slow, no cross-origin permission, 404), all 33 templates, the dashboard, and a phone-sized screen.
+- **Not included:** transparent PNG, other sizes, selectable-text or vector PDF, print bleed, exporting from the public page, batch export. Safari's first SVG-based capture can be blank, so Safari gets a throwaway first pass; it is untested in this environment (only Chromium is available).
 
 ## Phase 12
 
