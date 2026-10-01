@@ -24,6 +24,8 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "ticket-party": () => import("./templates/general-party/ticket-party").then((m) => ({ default: m.TicketParty })),
   "garden-party": () => import("./templates/general-party/garden-party").then((m) => ({ default: m.GardenParty })),
   "deco-party": () => import("./templates/general-party/deco-party").then((m) => ({ default: m.DecoParty })),
+  "bubbly-bridal-shower": () => import("./templates/bridal-shower/bubbly-bridal-shower").then((m) => ({ default: m.BubblyBridalShower })),
+  "peony-bridal-shower": () => import("./templates/bridal-shower/peony-bridal-shower").then((m) => ({ default: m.PeonyBridalShower })),
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 
