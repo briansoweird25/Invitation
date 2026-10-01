@@ -21,3 +21,8 @@ export function contrastRatio(a: string, b: string): number | null {
 export function pickReadable(background: string, ...candidates: string[]): string {
   return candidates.reduce((best, c) => ((contrastRatio(c, background) ?? 0) > (contrastRatio(best, background) ?? 0) ? c : best), candidates[0]);
 }
+
+/** The accent color when it is readable as text on the background, otherwise the main text color. */
+export function accentText(design: { accentColor: string; backgroundColor: string; textColor: string }, minContrast = 3): string {
+  return (contrastRatio(design.accentColor, design.backgroundColor) ?? 0) >= minContrast ? design.accentColor : design.textColor;
+}

@@ -2,6 +2,9 @@ import { categoryConfigs } from "@/data/categories";
 import { categories, type InvitationCategory } from "@/data/taxonomy";
 import type { InvitationContent, InvitationDesign } from "@/types/invitation";
 import type { DesignPreset, TemplateMeta } from "./templateTypes";
+import { botanicalBabyShower } from "./templates/baby-shower/botanical-baby-shower/meta";
+import { moonlightBabyShower } from "./templates/baby-shower/moonlight-baby-shower/meta";
+import { rainbowBabyShower } from "./templates/baby-shower/rainbow-baby-shower/meta";
 import { confettiBirthday } from "./templates/birthday/confetti-birthday/meta";
 import { editorialBirthday } from "./templates/birthday/editorial-birthday/meta";
 import { modernBirthday } from "./templates/birthday/modern-birthday/meta";
@@ -24,6 +27,9 @@ const metas: TemplateMeta[] = [
   confettiBirthday,
   vintageBirthday,
   editorialBirthday,
+  botanicalBabyShower,
+  rainbowBabyShower,
+  moonlightBabyShower,
 ];
 
 export type TemplateId = string;

@@ -15,6 +15,9 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "modern-birthday": () => import("./templates/birthday/modern-birthday").then((m) => ({ default: m.ModernBirthday })),
   "confetti-birthday": () => import("./templates/birthday/confetti-birthday").then((m) => ({ default: m.ConfettiBirthday })),
   "vintage-birthday": () => import("./templates/birthday/vintage-birthday").then((m) => ({ default: m.VintageBirthday })),
+  "botanical-baby-shower": () => import("./templates/baby-shower/botanical-baby-shower").then((m) => ({ default: m.BotanicalBabyShower })),
+  "rainbow-baby-shower": () => import("./templates/baby-shower/rainbow-baby-shower").then((m) => ({ default: m.RainbowBabyShower })),
+  "moonlight-baby-shower": () => import("./templates/baby-shower/moonlight-baby-shower").then((m) => ({ default: m.MoonlightBabyShower })),
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 

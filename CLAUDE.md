@@ -349,7 +349,7 @@ A template has one to four style tags. Tags describe the look and power gallery 
 
 ## Current templates
 
-Eight templates exist today. The first four are the **reference templates** that proved the architecture. The rest are the first batch (T5):
+Eleven templates exist today. The first four are the **reference templates** that proved the architecture. The next four are the first batch (T5), and the Baby Shower templates are the second (T6):
 
 Wedding:
 - Elegant Wedding (elegant, traditional)
@@ -363,6 +363,11 @@ Birthday:
 - Vintage Birthday (vintage, traditional)
 - Editorial Birthday (editorial, modern)
 
+Baby Shower:
+- Botanical Baby Shower (botanical, romantic, minimal)
+- Rainbow Baby Shower (playful, colorful)
+- Moonlight Baby Shower (romantic, modern, minimal)
+
 ## Growing the catalog
 
 Do not build many templates before the architecture is ready. Order of work:
@@ -371,7 +376,7 @@ Do not build many templates before the architecture is ready. Order of work:
 2. Kit v1: shared frames, botanicals, patterns, ornaments, shapes and backgrounds. **Done (T2).**
 3. Palette and font-pairing libraries, plus capability-driven editor pickers. **Done (T3).**
 4. Gallery upgrade: category tabs, style filters, sort, variations in the preview, lazy previews. **Done (T4).**
-5. Template batches, one category at a time (about three to four per category), each tested in the gallery, editor and dashboard before the next. **First batch done (T5): Wedding and Birthday have four templates each.** Next: Baby Shower, Graduation, General Party, then the rest.
+5. Template batches, one category at a time (about three to four per category), each tested in the gallery, editor and dashboard before the next. **Done so far: Wedding and Birthday have four templates each (T5) and Baby Shower has three (T6).** Next: Graduation, General Party, then the rest.
 
 Quality is more important than quantity. Variety is important too: layouts, decoration, backgrounds and mood should differ across the catalog.
 
@@ -1014,7 +1019,8 @@ T2: Kit v1 (frames, botanicals, patterns, ornaments, shapes, backgrounds). Done.
 T3: Palette and font-pairing libraries, capability-driven editor pickers. Done.
 T4: Gallery upgrade (style filters, sort, variations, lazy previews, landing occasions). Done.
 T5: First template batch, Wedding and Birthday to four templates each. Done.
-T6+: Further batches, one category at a time (Baby Shower, Graduation, General Party, then the rest).
+T6: Baby Shower, three templates. Done.
+T7+: Further batches, one category at a time (Graduation, General Party, then the rest).
 
 T1 to T4 are in place, so Phase 9 (public invitations) and Phase 11 (export) render the richer templates from the start.
 

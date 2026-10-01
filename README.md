@@ -94,7 +94,7 @@ RSVP
 
 ## Template library (growing)
 
-Eight templates exist today (four weddings and four birthdays: Elegant, Floral, Minimal and Luxury Wedding, and Modern, Confetti, Vintage and Editorial Birthday), each with three presets, built on a shared decoration kit of 47 pieces. The template system supports:
+Eleven templates exist today (four weddings, four birthdays and three baby showers), each with three presets, built on a shared decoration kit of 47 pieces. The template system supports:
 
 - 13 categories: Wedding, Birthday, Baby Shower, Bridal Shower, Engagement, Anniversary, Graduation, Baptism, Communion, Retirement, Dinner Party, Corporate Event, General Party
 - 13 style tags: Elegant, Romantic, Floral, Modern, Minimal, Luxury, Vintage, Rustic, Botanical, Playful, Colorful, Traditional, Editorial
