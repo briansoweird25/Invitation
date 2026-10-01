@@ -34,6 +34,12 @@ const loaders: Record<string, () => Promise<{ default: TemplateComponent }>> = {
   "water-baptism": () => import("./templates/baptism/water-baptism").then((m) => ({ default: m.WaterBaptism })),
   "lily-communion": () => import("./templates/communion/lily-communion").then((m) => ({ default: m.LilyCommunion })),
   "radiant-communion": () => import("./templates/communion/radiant-communion").then((m) => ({ default: m.RadiantCommunion })),
+  "sunset-retirement": () => import("./templates/retirement/sunset-retirement").then((m) => ({ default: m.SunsetRetirement })),
+  "distinguished-retirement": () => import("./templates/retirement/distinguished-retirement").then((m) => ({ default: m.DistinguishedRetirement })),
+  "supper-dinner-party": () => import("./templates/dinner-party/supper-dinner-party").then((m) => ({ default: m.SupperDinnerParty })),
+  "plate-dinner-party": () => import("./templates/dinner-party/plate-dinner-party").then((m) => ({ default: m.PlateDinnerParty })),
+  "summit-corporate": () => import("./templates/corporate-event/summit-corporate").then((m) => ({ default: m.SummitCorporate })),
+  "gala-corporate": () => import("./templates/corporate-event/gala-corporate").then((m) => ({ default: m.GalaCorporate })),
   "editorial-birthday": () => import("./templates/birthday/editorial-birthday").then((m) => ({ default: m.EditorialBirthday })),
 };
 

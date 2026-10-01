@@ -26,6 +26,12 @@ import { blessingBaptism } from "./templates/baptism/blessing-baptism/meta";
 import { waterBaptism } from "./templates/baptism/water-baptism/meta";
 import { lilyCommunion } from "./templates/communion/lily-communion/meta";
 import { radiantCommunion } from "./templates/communion/radiant-communion/meta";
+import { sunsetRetirement } from "./templates/retirement/sunset-retirement/meta";
+import { distinguishedRetirement } from "./templates/retirement/distinguished-retirement/meta";
+import { supperDinnerParty } from "./templates/dinner-party/supper-dinner-party/meta";
+import { plateDinnerParty } from "./templates/dinner-party/plate-dinner-party/meta";
+import { summitCorporate } from "./templates/corporate-event/summit-corporate/meta";
+import { galaCorporate } from "./templates/corporate-event/gala-corporate/meta";
 import { elegantWedding } from "./templates/wedding/elegant-wedding/meta";
 import { floralWedding } from "./templates/wedding/floral-wedding/meta";
 import { luxuryWedding } from "./templates/wedding/luxury-wedding/meta";
@@ -63,6 +69,12 @@ const metas: TemplateMeta[] = [
   waterBaptism,
   lilyCommunion,
   radiantCommunion,
+  sunsetRetirement,
+  distinguishedRetirement,
+  supperDinnerParty,
+  plateDinnerParty,
+  summitCorporate,
+  galaCorporate,
 ];
 
 export type TemplateId = string;
